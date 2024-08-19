@@ -5,16 +5,18 @@ import { getSession } from "@/lib/session";
 
 export default async function Home() {
   const session = getSession()
+  console.log(session, "asdasda")
+  if (!session){
+    redirect("/login")
+    return null
+  }
   if (session?.role === 'admin') {
     redirect('/admin');
     return null
   } else if (session?.role === 'cashier') {
     redirect('/cashier');
     return null
-  } else if (!session){
-    redirect("/login")
-    return null
-  }
+  } else 
 
 
   return (

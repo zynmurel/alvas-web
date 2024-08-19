@@ -50,7 +50,14 @@ export async function POST(req: NextRequest) {
             if (!passwordMatch) {
               return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
             }
-            return NextResponse.json({ message: 'Login successful', user: { username: user.username, role: "cashier" } }, { status: 200 });
+            const sessionToken = createSessionToken({ username, password, role })
+            const response = NextResponse.json({ message: 'Login successful', user: { username: user.username, role: "cashier" } }, { status: 200 });
+            response.cookies.set('session-token', sessionToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              path: '/',
+            });
+            return response
         }
 
     } catch (error) {
