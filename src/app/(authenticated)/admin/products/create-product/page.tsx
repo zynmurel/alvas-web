@@ -100,8 +100,7 @@ const Page = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmitProduct)} className="flex flex-col w-full my-5 space-y-6">
           <div className="w-full space-y-6">
-            {/*Tour Details*/}
-            <h1 className="font-medium ">Tour Details</h1>
+            <h1 className="font-medium ">Product Details</h1>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
               <FormField
                 control={form.control}
@@ -113,7 +112,7 @@ const Page = () => {
                       <div className="flex items-center justify-between w-40 my-2 overflow-hidden border-2 border-dashed rounded-3xl">
                         <label htmlFor="file" className="flex flex-col items-center justify-center w-full gap-2 text-xs text-gray-500 cursor-pointer aspect-square">
                           {
-                                    productImage ? <img alt="Tour Banner" src={productImage} className="object-cover w-full h-full hover:brightness-75"/> : 
+                                    productImage ? <img alt="Product Image" src={productImage} className="object-cover w-full h-full hover:brightness-75"/> : 
                                         <>
                                             <Plus/>
                                             <span>Tour Banner</span>
@@ -142,7 +141,7 @@ const Page = () => {
                       </div>
                     </FormControl>
                     <FormDescription>
-                      This is your banner for the tour.
+                      This is your image for the product.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
