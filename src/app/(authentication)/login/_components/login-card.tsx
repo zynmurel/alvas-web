@@ -51,9 +51,11 @@ export function LoginCard() {
       password,
       role
     });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    localStorage.setItem("user", JSON.stringify(data.data.user || null))
     if (data.status === 200) {
-      router.push('/')
-    } else {
+      window.location.href = '/';
+        } else {
         toast({
           variant:"destructive",
           title : 'An error occurred',
@@ -71,8 +73,8 @@ export function LoginCard() {
           title : "Success login",
           description : "Welcome user."
         })
-        router.push("/")
-      }
+        window.location.href = '/';     
+       }
     }).finally(()=>{
       setLoginLoading(false)
     })

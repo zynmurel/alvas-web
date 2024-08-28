@@ -49,6 +49,7 @@ model cashier {
 model products {
     id        Int      @id @default(autoincrement())
     product_name String
+    image_url String
     admin_id  Int
     category product_category
     amount Float

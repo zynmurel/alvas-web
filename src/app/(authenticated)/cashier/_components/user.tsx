@@ -11,12 +11,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import axios from "axios"
-import { redirect, useRouter } from "next/navigation"
 const UserProfile = () => {
-  const route = useRouter()
   const logout = async () => {
     await axios.post('/api/auth/logout')
-    route.push("/")
+    window.location.href = '/';
 
   }
     return ( 
