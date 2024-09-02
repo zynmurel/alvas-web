@@ -26,16 +26,16 @@ import {
 import { uploadImage } from "@/app/helper/upload";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-const categories = ["CHICKEN", "CHICHARON", "RICE", "DRINKS"]
+// const categories = ["CHICKEN", "CHICHARON", "RICE", "DRINKS"]
 const CreateProductSchema = z.object({
   image_url: z.instanceof(File)
     .optional()
     .refine((file) => !file || (file.size / 1024 / 1024) <= 10, 'File size must be less than 10MB')
     .refine((file) => file ? ['image/png', 'image/jpeg'].includes(file.type) : true, 'File must be a PNG or JPEG'),
   product_name: z.string().min(2, { message: "Product name is required." }),
-  category: z.enum(["CHICKEN", "CHICHARON", "RICE", "DRINKS"], { message: "Product category is required." }),
+  category_id: z.coerce.number(),
   amount: z.coerce.number({ message: "Invalid number" }),
 })
 
@@ -49,7 +49,11 @@ const Page = () => {
     defaultValues: {}
   })
 
-  const onSave = () => router.push("products")
+  const onAddCategory = () => router.push("/admin/category/")
+
+  const onSave = () => router.push("/admin/products")
+
+  const { data:categories, isLoading:categoriesLoading} = api.category.getCategories.useQuery()
 
   const { mutateAsync, isPending } = api.product.upsertProduct.useMutation({
     onSuccess:()=>{
@@ -84,7 +88,7 @@ const Page = () => {
           admin_id : user.id,
           product_name:data.product_name,
           image_url:image,
-          category:data.category,
+          category_id:data.category_id,
           amount:data.amount
         })
       }else {
@@ -107,7 +111,7 @@ const Page = () => {
                 name="image_url"
                 render={() => (
                   <FormItem className="flex flex-col justify-start w-full lg:col-span-1 col-span-full">
-                    <FormLabel className="text-gray-600">Banner Image</FormLabel>
+                    <FormLabel className="text-gray-600">Product Image</FormLabel>
                     <FormControl>
                       <div className="flex items-center justify-between w-40 my-2 overflow-hidden border-2 border-dashed rounded-3xl">
                         <label htmlFor="file" className="flex flex-col items-center justify-center w-full gap-2 text-xs text-gray-500 cursor-pointer aspect-square">
@@ -166,20 +170,23 @@ const Page = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="category"
+                  name="category_id"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
                       <FormLabel className="text-gray-600">Category</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} 
+                      // disabled={categoriesLoading}
+                      >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Product Category" />
+                            <SelectValue placeholder={`${categoriesLoading ? "Loading...":"Product Category"}`} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {
-                            categories.map((cat) => (<SelectItem value={cat} key={cat} className=" capitalize">{cat}</SelectItem>))
+                            categories?.map((cat) => (<SelectItem value={cat.id.toString()} key={cat.id} className=" capitalize">{cat.category_name}</SelectItem>))
                           }
+                          <Button size={"sm"} variant={"outline"} onClick={onAddCategory} className=" w-full"><PlusCircle className="h-3.5 w-3.5 mr-2" />Add Category</Button>
                         </SelectContent>
                       </Select>
                       <FormDescription>

@@ -47,25 +47,27 @@ import { api } from "@/trpc/react"
 import { useEffect, useState } from "react"
 import { formatCurrency } from "@/app/helper/format"
 type StatusType ="ALL" | "AVAILABLE" | "NOT_AVAILABLE"
-type CategoryType = "ALL" | "CHICKEN" | "CHICHARON" | "RICE" | "DRINKS"
+type CategoryType = undefined | number
 const ProductsPage = () => {
   const router = useRouter()
   const [status, setStatus] = useState<StatusType>("ALL")
-  const [category, setCategory] = useState<CategoryType>("ALL")
+  const [category, setCategory] = useState<CategoryType>(undefined)
 
   const onClickAddProduct = () => router.push("products/create-product")
 
-  const { data:products, isLoading:productsIsLoading} = api.product.getAllProducts.useQuery({ status, category })
+  const { data:products, isLoading:productsIsLoading} = api.product.getAllProducts.useQuery({ status, category_id:category })
+
+  const { data:categories, isLoading:categoriesLoading} = api.category.getCategories.useQuery()
 
   // useEffect(()=>{
   //   (async()=>await getProducts())
   // },[getProducts, status, category])
-  
-  console.log(products)
     return ( 
         <div className=" flex flex-col">
           <div className="mx-auto grid w-full max-w-6xl gap-2">
-            <h1 className="text-3xl font-semibold">Products</h1>
+            <div className=" flex flex-row items-center justify-between">
+              <h1 className="text-3xl font-semibold">Products</h1>
+              </div>
             <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
               <Tabs defaultValue={status} onValueChange={(e)=>setStatus(e as StatusType)}>
                 <div className="flex items-center">
@@ -77,7 +79,7 @@ const ProductsPage = () => {
                   <div className="ml-auto flex items-center gap-2">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-7 gap-1">
+                        <Button variant="outline" size="sm" className="h-7 gap-1" disabled={categoriesLoading}>
                           <ListFilter className="h-3.5 w-3.5" />
                           <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                             Filter
@@ -87,14 +89,20 @@ const ProductsPage = () => {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                         <DropdownMenuSeparator />
+                        <DropdownMenuCheckboxItem key={1} onClick={()=>setCategory(undefined)} checked={undefined===category}>
+                              {'All'}
+                            </DropdownMenuCheckboxItem>
                         {
-                          ["ALL" , "CHICKEN" , "CHICHARON" , "RICE" , "DRINKS"].map((cat)=>(
-                            <DropdownMenuCheckboxItem key={cat} onClick={()=>setCategory(cat as CategoryType)} checked={cat===category}>
-                              {cat}
+                          categories?.map((cat)=>(
+                            <DropdownMenuCheckboxItem key={cat.id} onClick={()=>setCategory(cat.id as CategoryType)} checked={cat.id===category}>
+                              {cat.category_name}
                             </DropdownMenuCheckboxItem>))
                         }
                       </DropdownMenuContent>
                     </DropdownMenu>
+                    <Button variant={"outline"} size="sm" className="h-7 gap-1" onClick={()=>router.push("/admin/category")}>
+                        Product Categories
+                    </Button>
                     <Button size="sm" className="h-7 gap-1" onClick={onClickAddProduct}>
                       <PlusCircle className="h-3.5 w-3.5" />
                       <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -146,7 +154,7 @@ const ProductsPage = () => {
                                   <Badge variant="outline">{prod.status}</Badge>
                                 </TableCell>
                                 <TableCell className="font-medium">
-                                  {prod.category}
+                                  {prod.category.category_name}
                                 </TableCell>
                                 <TableCell>{formatCurrency(prod.amount)}</TableCell>
                                 <TableCell>

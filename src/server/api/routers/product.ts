@@ -5,14 +5,17 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 export const productRouter = createTRPCRouter({
     getAllProducts: publicProcedure.input(z.object({
         status :z.enum(["AVAILABLE", "NOT_AVAILABLE", "ALL"]),
-        category : z.enum(["ALL" , "CHICKEN" , "CHICHARON" , "RICE" , "DRINKS"])
+        category_id : z.number().optional()
     })).query(({ input, ctx }) => {
         const whereStatus = input.status === "ALL" ? {} : {status:input.status}
-        const whereCategorty = input.category === "ALL" ? {} : {category:input.category}
+        const whereCategorty = !input.category_id ? {} : {category_id:input.category_id}
         return ctx.db.products.findMany({
             where : {
                 ...whereStatus,
-                ...whereCategorty
+                ...whereCategorty,
+            },
+            include:{
+                category:true
             }
         })
     }),
@@ -21,7 +24,7 @@ export const productRouter = createTRPCRouter({
             id: z.number().nullish(),
             image_url: z.string(),
             product_name: z.string(),
-            category: z.enum(["CHICKEN", "CHICHARON", "RICE", "DRINKS"]),
+            category_id: z.number(),
             amount: z.coerce.number(),
             admin_id: z.number()
         }))
@@ -33,14 +36,14 @@ export const productRouter = createTRPCRouter({
                 create: {
                     image_url: input.image_url,
                     product_name: input.product_name,
-                    category: input.category,
+                    category_id: input.category_id,
                     amount: input.amount,
                     admin_id: input.admin_id
                 },
                 update: {
                     image_url: input.image_url,
                     product_name: input.product_name,
-                    category: input.category,
+                    category_id: input.category_id,
                     amount: input.amount,
                 }
             })
