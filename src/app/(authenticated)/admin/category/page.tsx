@@ -38,6 +38,8 @@ import { useRouter } from "next/navigation"
 import { api } from "@/trpc/react"
 import { useState } from "react"
 import CreateCategory from "./_components/create-category"
+import { DataPagination } from "./_components/pagination"
+import { PaginationType } from "@/lib/types/pagination"
 type CategoryType = undefined | {
   id:number;
   name:string | undefined;
@@ -45,6 +47,10 @@ type CategoryType = undefined | {
 const ProductsPage = () => {
   const router = useRouter()
   const [category, setCategory] = useState<CategoryType>(undefined)
+  const [pagination, setPagination] = useState<PaginationType>({
+    take:10,
+    skip:0
+  })
 
   const onClickAddProduct = () => setCategory({
     id:0,
@@ -60,7 +66,7 @@ const ProductsPage = () => {
         <div className=" flex flex-col">
           <div className="mx-auto grid w-full max-w-6xl gap-2">
             <div className=" flex flex-row items-center justify-between">
-              <h1 className="text-3xl font-semibold">Categories</h1>
+              <h1 className="text-3xl font-semibold">Product Categories</h1>
               <Button size="sm" className="h-7 gap-1" onClick={onClickAddProduct}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -95,7 +101,7 @@ const ProductsPage = () => {
                         </TableHeader>
                         {(!categoriesLoading && categories?.length) ? <TableBody>
                           {
-                            categories.map((prod, index)=>(
+                            categories.slice(pagination.skip, pagination.skip+pagination.take).map((prod, index)=>(
                               <TableRow key={index}>
                                 <TableCell className="font-medium">
                                   {prod.category_name}
@@ -132,6 +138,7 @@ const ProductsPage = () => {
                       </Table>
                       {categoriesLoading && <div className=" w-full flex p-5 justify-center items-center gap-2 flex-row text-gray-500"><LoaderCircle className=" animate-spin" />Loading...</div>}
                       {!categoriesLoading && !categories?.length && <div className=" w-full flex p-5 justify-center items-center gap-2 flex-row text-gray-500"><PackageSearch/>No Products Found</div>}
+                      <DataPagination count={categories?.length || 0} filter={pagination} setFilter={setPagination}/>
                     </CardContent>
                     {/* <CardFooter>
                       <div className="text-xs text-muted-foreground">

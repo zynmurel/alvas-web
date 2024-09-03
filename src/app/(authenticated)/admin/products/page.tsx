@@ -46,18 +46,32 @@ import { useRouter } from "next/navigation"
 import { api } from "@/trpc/react"
 import { useEffect, useState } from "react"
 import { formatCurrency } from "@/app/helper/format"
+import { type PaginationType } from "@/lib/types/pagination"
+import { DataPagination } from "../category/_components/pagination"
 type StatusType ="ALL" | "AVAILABLE" | "NOT_AVAILABLE"
 type CategoryType = undefined | number
 const ProductsPage = () => {
   const router = useRouter()
   const [status, setStatus] = useState<StatusType>("ALL")
   const [category, setCategory] = useState<CategoryType>(undefined)
+  const [pagination, setPagination] = useState<PaginationType>({
+    take:10,
+    skip:0
+  })
 
-  const onClickAddProduct = () => router.push("products/create-product")
+  const onClickAddProduct = (path:string | number) => ()=>router.push("products/create-product/"+path)
 
-  const { data:products, isLoading:productsIsLoading} = api.product.getAllProducts.useQuery({ status, category_id:category })
+  const { data:products, isLoading:productsIsLoading, refetch} = api.product.getAllProducts.useQuery({ status, category_id:category })
 
   const { data:categories, isLoading:categoriesLoading} = api.category.getCategories.useQuery()
+
+  const { mutateAsync: deleteProduct, isPending } = api.product.deleteProduct.useMutation({
+    onSuccess:()=>refetch()
+  })
+
+  useEffect(()=>{ 
+    void refetch()
+   },[refetch])
 
   // useEffect(()=>{
   //   (async()=>await getProducts())
@@ -103,7 +117,7 @@ const ProductsPage = () => {
                     <Button variant={"outline"} size="sm" className="h-7 gap-1" onClick={()=>router.push("/admin/category")}>
                         Product Categories
                     </Button>
-                    <Button size="sm" className="h-7 gap-1" onClick={onClickAddProduct}>
+                    <Button size="sm" className="h-7 gap-1" onClick={onClickAddProduct("new")}>
                       <PlusCircle className="h-3.5 w-3.5" />
                       <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                         Add Product
@@ -136,7 +150,7 @@ const ProductsPage = () => {
                         </TableHeader>
                         {(!productsIsLoading && products?.length) ? <TableBody>
                           {
-                            products.map((prod, index)=>(
+                            products.slice(pagination.skip, pagination.skip+pagination.take).map((prod, index)=>(
                               <TableRow key={index}>
                                 <TableCell className="hidden sm:table-cell">
                                   <img
@@ -158,7 +172,7 @@ const ProductsPage = () => {
                                 </TableCell>
                                 <TableCell>{formatCurrency(prod.amount)}</TableCell>
                                 <TableCell>
-                                  <DropdownMenu>
+                                  <DropdownMenu key={prod.id}>
                                     <DropdownMenuTrigger asChild>
                                       <Button
                                         aria-haspopup="true"
@@ -171,7 +185,17 @@ const ProductsPage = () => {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                      <DropdownMenuItem>Edit</DropdownMenuItem>
+                                      <Button onClick={onClickAddProduct(prod.id)} size={"sm"} variant={"outline"} className=" w-full">
+                                        Edit
+                                      </Button>
+                                      {!prod.orders.length && <Button 
+                                      disabled={isPending} 
+                                      onClick={()=>deleteProduct({id:Number(prod.id)})} 
+                                      size={"sm"} 
+                                      variant={"outline"} 
+                                      className=" border border-red-400 mt-1 text-red-400 bg-red-50 w-full">
+                                        Delete
+                                      </Button>}
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 </TableCell>
@@ -181,6 +205,7 @@ const ProductsPage = () => {
                       </Table>
                       {productsIsLoading && <div className=" w-full flex p-5 justify-center items-center gap-2 flex-row text-gray-500"><LoaderCircle className=" animate-spin" />Loading...</div>}
                       {!productsIsLoading && !products?.length && <div className=" w-full flex p-5 justify-center items-center gap-2 flex-row text-gray-500"><PackageSearch/>No Products Found</div>}
+                      <DataPagination count={categories?.length || 0} filter={pagination} setFilter={setPagination}/>
                     </CardContent>
                     {/* <CardFooter>
                       <div className="text-xs text-muted-foreground">

@@ -25,10 +25,10 @@ import {
 } from "@/components/ui/select"
 import { uploadImage } from "@/app/helper/upload";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, PlusCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-// const categories = ["CHICKEN", "CHICHARON", "RICE", "DRINKS"]
+import { useParams, useRouter } from "next/navigation";
+
 const CreateProductSchema = z.object({
   image_url: z.instanceof(File)
     .optional()
@@ -41,6 +41,8 @@ const CreateProductSchema = z.object({
 
 const Page = () => {
   const [productImage, setProductImage] = useState<string|null>(null)
+  const [productImageLoading, setProductImageLoading] = useState(false)
+  const { id } = useParams()
   const { user } = useStore()
   const { toast } = useToast()
   const router = useRouter()
@@ -54,6 +56,11 @@ const Page = () => {
   const onSave = () => router.push("/admin/products")
 
   const { data:categories, isLoading:categoriesLoading} = api.category.getCategories.useQuery()
+  const { data:product, isLoading:productIsLoading} = api.product.getProduct.useQuery({
+    id : Number(id)
+  },{
+    enabled : id!=="new"
+  })
 
   const { mutateAsync, isPending } = api.product.upsertProduct.useMutation({
     onSuccess:()=>{
@@ -74,17 +81,24 @@ const Page = () => {
 
   const _uploadImage = async (file:File | undefined) => {
     if(file){
-      return await uploadImage(file)
+      setProductImageLoading(true)
+      return await uploadImage(file).finally(()=>setProductImageLoading(false))
     }else{
       return null
     }
   }
 
   const onSubmitProduct = async (data: z.infer<typeof CreateProductSchema>) => {
-    const image = await _uploadImage(data.image_url)
-    if(image){
+    let image = productImage
+        
+    //setter of iamge if product image was uploaded
+    if(data.image_url){
+      image = await _uploadImage(data.image_url)
+    }
+    if(!!image){
       if(user?.id){
         return mutateAsync({
+          id : id ==="new" ? undefined : Number(id),
           admin_id : user.id,
           product_name:data.product_name,
           image_url:image,
@@ -95,9 +109,20 @@ const Page = () => {
         throw new Error("User not found")
       }
     } else {
+      if(!image) form.setError("image_url", {message:"Product Image is required"})
       throw new Error("Uploading Image Error")
     }
   }
+
+  useEffect(()=>{
+    if(product){
+      form.setValue("amount", product.amount)
+      form.setValue("product_name", product.product_name)
+      form.setValue("category_id", product.category_id)
+      setProductImage(product.image_url)
+      // form.resetField("category_id",1)
+    }
+  },[form, product, categories])
 
   return (
     <div>
@@ -107,6 +132,7 @@ const Page = () => {
             <h1 className="font-medium ">Product Details</h1>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
               <FormField
+              disabled={productIsLoading}
                 control={form.control}
                 name="image_url"
                 render={() => (
@@ -119,7 +145,7 @@ const Page = () => {
                                     productImage ? <img alt="Product Image" src={productImage} className="object-cover w-full h-full hover:brightness-75"/> : 
                                         <>
                                             <Plus/>
-                                            <span>Tour Banner</span>
+                                            <span>Product Image</span>
                                         </>
                                     }
                           <input
@@ -153,6 +179,7 @@ const Page = () => {
               />
               <div className="grid grid-cols-1 gap-6 col-span-full lg:col-span-3 xl:col-span-4 md:grid-cols-2">
                 <FormField
+              disabled={productIsLoading}
                   control={form.control}
                   name="product_name"
                   render={({ field }) => (
@@ -169,13 +196,19 @@ const Page = () => {
                   )}
                 />
                 <FormField
+              disabled={productIsLoading}
                   control={form.control}
                   name="category_id"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
                       <FormLabel className="text-gray-600">Category</FormLabel>
-                      <Select onValueChange={field.onChange} 
-                      // disabled={categoriesLoading}
+                      <Select 
+                      onValueChange={(e)=>{
+                        console.log(typeof e ,e, "sean")
+                        field.onChange(e)
+                      }} 
+                      value={field.value?.toString()}
+                      disabled={categoriesLoading}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -197,6 +230,7 @@ const Page = () => {
                   )}
                 />
                 <FormField
+              disabled={productIsLoading}
                 control={form.control}
                 name="amount"
                 render={({ field }) => (
@@ -215,7 +249,7 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <Button type="submit" disabled={isPending} className="self-end ">{"Submit Product"}</Button>
+          <Button type="submit" disabled={isPending || productIsLoading} className="self-end ">{"Submit Product"}</Button>
         </form>
       </Form>
     </div>

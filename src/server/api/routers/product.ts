@@ -15,7 +15,26 @@ export const productRouter = createTRPCRouter({
                 ...whereCategorty,
             },
             include:{
-                category:true
+                category:true,
+                orders:true,
+            }
+        })
+    }),
+    getProduct :publicProcedure.input(z.object({
+        id:z.number().optional()
+    })).query(({ctx, input})=>{
+        return ctx.db.products.findUnique({
+            where:{
+                id:input.id
+            }
+        })
+    }),
+    deleteProduct : publicProcedure.input(z.object({
+        id:z.number()
+    })).mutation(({ctx, input})=>{
+        return ctx.db.products.delete({
+            where:{
+                id:input.id
             }
         })
     }),
