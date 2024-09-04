@@ -1,11 +1,27 @@
-const StaffsPage = () => {
-    return ( 
-        <div className=" flex flex-col">
-          <div className="mx-auto grid w-full max-w-6xl gap-2">
-            <h1 className="text-3xl font-semibold">Staffs</h1>
-          </div>
-        </div>
-        );
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+import Cashier from "./_components/cashier";
+import Rider from "./_components/rider";
+const Staffs = () => {
+  return ( 
+      <div className="w-full">
+          <Tabs defaultValue="cashier">
+            <TabsList className="grid grid-cols-2 w-[400px]">
+              <TabsTrigger value="cashier">Cashier</TabsTrigger>
+              <TabsTrigger value="rider">Rider</TabsTrigger>
+            </TabsList>
+            <TabsContent value="cashier">
+              <Cashier/>
+            </TabsContent>
+            <TabsContent value="rider">
+              <Rider/>
+            </TabsContent>
+          </Tabs>
+      </div> );
 }
  
-export default StaffsPage;
+export default Staffs;

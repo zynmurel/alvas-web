@@ -99,6 +99,7 @@ model delivery_rider {
     id             Int           @id @default(autoincrement())
     admin_id       Int
     username       String        @unique
+    password     String
     first_name     String
     middle_name    String
     last_name      String
@@ -129,8 +130,10 @@ model settings {
     delivery_fee   Float
     contact_number String
     email_address  String
+    store_name  String @default("Sample")
     address        String
     extra_details  String?
+    defaultPassForStaff String @default("Default123")
     updatedAt      DateTime @updatedAt
     admin          admin    @relation(fields: [admin_id], references: [id])
 }

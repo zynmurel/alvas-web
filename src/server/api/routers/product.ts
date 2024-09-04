@@ -38,6 +38,18 @@ export const productRouter = createTRPCRouter({
             }
         })
     }),
+    archiveProduct : publicProcedure.input(z.object({
+        id:z.number()
+    })).mutation(({ctx, input})=>{
+        return ctx.db.products.update({
+            where:{
+                id:input.id
+            },
+            data:{
+                status :"NOT_AVAILABLE"
+            }
+        })
+    }),
     upsertProduct: publicProcedure
         .input(z.object({
             id: z.number().nullish(),

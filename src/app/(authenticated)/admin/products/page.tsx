@@ -1,7 +1,5 @@
 'use client'
-import Image from "next/image"
 import {
-  File,
   ListFilter,
   LoaderCircle,
   MoreHorizontal,
@@ -15,7 +13,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -23,7 +20,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -38,7 +34,6 @@ import {
 } from "@/components/ui/table"
 import {
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
@@ -47,7 +42,7 @@ import { api } from "@/trpc/react"
 import { useEffect, useState } from "react"
 import { formatCurrency } from "@/app/helper/format"
 import { type PaginationType } from "@/lib/types/pagination"
-import { DataPagination } from "../category/_components/pagination"
+import { DataPagination } from "../category/_components/table-components/pagination"
 type StatusType ="ALL" | "AVAILABLE" | "NOT_AVAILABLE"
 type CategoryType = undefined | number
 const ProductsPage = () => {
@@ -59,8 +54,6 @@ const ProductsPage = () => {
     skip:0
   })
 
-  const onClickAddProduct = (path:string | number) => ()=>router.push("products/create-product/"+path)
-
   const { data:products, isLoading:productsIsLoading, refetch} = api.product.getAllProducts.useQuery({ status, category_id:category })
 
   const { data:categories, isLoading:categoriesLoading} = api.category.getCategories.useQuery()
@@ -68,6 +61,14 @@ const ProductsPage = () => {
   const { mutateAsync: deleteProduct, isPending } = api.product.deleteProduct.useMutation({
     onSuccess:()=>refetch()
   })
+
+  const { mutateAsync: archiveProduct, isPending:archiveProductPending } = api.product.archiveProduct.useMutation({
+    onSuccess:()=>refetch()
+  })
+  
+  const onClickAddProduct = (path:string | number) => ()=>router.push("products/create-product/"+path)
+
+  const onArchiveProduct = (id:number) => ()=>archiveProduct({id})
 
   useEffect(()=>{ 
     void refetch()
@@ -125,7 +126,7 @@ const ProductsPage = () => {
                     </Button>
                   </div>
                 </div>
-                <Card x-chunk="dashboard-06-chunk-0">
+                <Card x-chunk="dashboard-06-chunk-0" className=" mt-2">
                     <CardHeader>
                       <CardTitle>Products</CardTitle>
                       <CardDescription>
@@ -183,10 +184,18 @@ const ProductsPage = () => {
                                         <span className="sr-only">Toggle menu</span>
                                       </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
+                                    <DropdownMenuContent align="end" className="w-[100px]">
                                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                       <Button onClick={onClickAddProduct(prod.id)} size={"sm"} variant={"outline"} className=" w-full">
                                         Edit
+                                      </Button>
+                                      <Button
+                                      disabled={archiveProductPending}
+                                      onClick={onArchiveProduct(prod.id)}
+                                      size={"sm"}
+                                      variant={"outline"}
+                                      className=" mt-1 w-full border-orange-500 text-orange-500">
+                                        Archive
                                       </Button>
                                       {!prod.orders.length && <Button 
                                       disabled={isPending} 

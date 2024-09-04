@@ -16,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useRouter } from "next/navigation"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
 import { useState } from "react"
@@ -34,7 +33,6 @@ const FormSchema = z.object({
 export function LoginCard() {
   const [loginLoading, setLoginLoading] = useState(false)
   const { toast } = useToast()
-  const router = useRouter()
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {

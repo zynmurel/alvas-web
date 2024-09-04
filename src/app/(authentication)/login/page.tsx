@@ -1,6 +1,4 @@
-import { getSession } from "@/lib/session";
 import { LoginCard } from "./_components/login-card";
-import { redirect, useRouter } from "next/navigation";
 
 const Page = () => {
     // const session = getSession()

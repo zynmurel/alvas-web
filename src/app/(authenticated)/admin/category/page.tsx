@@ -38,8 +38,10 @@ import { useRouter } from "next/navigation"
 import { api } from "@/trpc/react"
 import { useState } from "react"
 import CreateCategory from "./_components/create-category"
-import { DataPagination } from "./_components/pagination"
+import { DataPagination } from "./_components/table-components/pagination"
 import { PaginationType } from "@/lib/types/pagination"
+import Loading from "./_components/table-components/loading"
+import NoFound from "./_components/table-components/no-found"
 type CategoryType = undefined | {
   id:number;
   name:string | undefined;
@@ -136,8 +138,8 @@ const ProductsPage = () => {
                           }
                         </TableBody> : <></>}
                       </Table>
-                      {categoriesLoading && <div className=" w-full flex p-5 justify-center items-center gap-2 flex-row text-gray-500"><LoaderCircle className=" animate-spin" />Loading...</div>}
-                      {!categoriesLoading && !categories?.length && <div className=" w-full flex p-5 justify-center items-center gap-2 flex-row text-gray-500"><PackageSearch/>No Products Found</div>}
+                      {categoriesLoading && <Loading/>}
+                      {!categoriesLoading && !categories?.length && <NoFound/>}
                       <DataPagination count={categories?.length || 0} filter={pagination} setFilter={setPagination}/>
                     </CardContent>
                     {/* <CardFooter>
