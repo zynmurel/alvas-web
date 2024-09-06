@@ -13,7 +13,7 @@ import { CheckIcon, LoaderCircle, Truck } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useTransactionContext } from "../../layout";
+import { useTransactionContext } from "../../context/transaction";
 interface AssignRider { 
     riders:{
         label: string;
@@ -37,9 +37,9 @@ const AssignRider = ({riders, searchRider, setSearchRider, riderIsLoading, refet
     });
 
     const { mutateAsync:assignRiderToTransaction, isPending:assignRiderToTransactionIsPending } = api.transaction.assignRiderToTransaction.useMutation({
-        onSuccess : () => {
+        onSuccess :async () => {
             refetchTransaction()
-            trContext?.refetchTransaction()
+            await trContext?.refetchTransaction()
             toast({
                 title : "Success",
                 "description" : "Rider assigned successfully. Transaction moved to ongoing."

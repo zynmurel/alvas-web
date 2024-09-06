@@ -8,14 +8,11 @@ import {
 import OrdersContent from "./_components/orders"
 import { api } from "@/trpc/react"
 import React, { createContext, useContext, useState } from "react"
+import { TransactionContext } from "./context/transaction"
 
 type StatusType ="PENDING" | "ONGOING" | "DONE" | "CANCELLED"
 
-interface TransactionContextType { refetchTransaction : () => Promise<void>}
 
-const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
-
-export const useTransactionContext = () => useContext(TransactionContext);
 
 const OrderPage = ({
   children,
