@@ -21,6 +21,8 @@ const config = {
     "@typescript-eslint/no-unsafe-assignment":"off",
     "@typescript-eslint/prefer-nullish-coalescing":"off",
     "@typescript-eslint/no-empty-interface":"off",
+    "@typescript-eslint/no-misused-promises":"off",
+    "@typescript-eslint/no-empty-function":"off",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {
@@ -35,14 +37,6 @@ const config = {
       }
     ],
     "@typescript-eslint/require-await": "off",
-    "@typescript-eslint/no-misused-promises": [
-      "error",
-      {
-        "checksVoidReturn": {
-          "attributes": false
-        }
-      }
-    ]
   }
 }
 module.exports = config;

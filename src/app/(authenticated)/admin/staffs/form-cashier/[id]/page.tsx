@@ -55,11 +55,20 @@ const FormCashier = () => {
             router.push("/admin/staffs")
         },
         onError : (e) =>{
-          toast({
-            variant:"destructive",
-            title:"Failed",
-            description:e.message
-          })
+        if(e.message.includes("Unique constraint failed on the fields")){
+            toast({
+                variant:"destructive",
+                title:"Failed",
+                description:"Username already used."
+              })
+            form.setError("username", { message : "Username already used."})
+        }else{
+            toast({
+              variant:"destructive",
+              title:"Failed",
+              description:e.message
+            })
+        }
         }
     })
 

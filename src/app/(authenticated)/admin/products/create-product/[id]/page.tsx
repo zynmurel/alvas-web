@@ -249,7 +249,7 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <Button type="submit" disabled={isPending || productIsLoading} className="self-end ">{"Submit Product"}</Button>
+          <Button type="submit" disabled={isPending || productImageLoading} className="self-end ">{"Submit Product"}</Button>
         </form>
       </Form>
     </div>

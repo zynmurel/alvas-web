@@ -34,7 +34,7 @@ import {
 const Page = () => {
     return ( 
         <div className=" flex flex-col">
-          <div className="mx-auto grid w-full max-w-6xl gap-2">
+          <div className="mx-auto grid w-full max-w-7xl gap-2">
             <h1 className="text-3xl font-semibold">Dashboard</h1>
             <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8">
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">

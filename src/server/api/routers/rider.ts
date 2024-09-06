@@ -91,5 +91,23 @@ export const riderRouter = createTRPCRouter({
           }else {
               throw new Error("Setting not found.")
           }
-      })
+      }),
+      getRiderForSelect  : publicProcedure
+      .input(z.object({
+        name_text:z.string()
+      }))
+      .query(({ctx, input : {name_text}})=>{
+        return ctx.db.delivery_rider.findMany()
+        .then((data)=>{
+            return data.filter((rider)=>{
+                const name = `${rider.first_name} ${rider.middle_name} ${rider.last_name}`
+                return name.toLowerCase().includes(name_text.toLowerCase())
+            }).map((rider)=>{
+                const name = `${rider.first_name} ${rider.middle_name} ${rider.last_name}`
+                return ({
+                label : name,
+                value : rider.id
+            })})
+        })
+      }),
 });

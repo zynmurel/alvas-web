@@ -6,7 +6,6 @@ import { getSession } from './lib/session';
 
 export async function middleware(req: NextRequest) {
   const session = getSession();
-  console.log("maiuo", session)
 
   return NextResponse.next();
 }

@@ -66,7 +66,7 @@ const ProductsPage = () => {
 
     return ( 
         <div className=" flex flex-col">
-          <div className="mx-auto grid w-full max-w-6xl gap-2">
+          <div className="mx-auto grid w-full max-w-7xl gap-2">
             <div className=" flex flex-row items-center justify-between">
               <h1 className="text-3xl font-semibold">Product Categories</h1>
               <Button size="sm" className="h-7 gap-1" onClick={onClickAddProduct}>

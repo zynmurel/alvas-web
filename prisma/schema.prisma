@@ -63,20 +63,20 @@ model products {
 }
 
 model product_category {
-    id            Int      @id @default(autoincrement())
+    id            Int        @id @default(autoincrement())
     category_name String
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    products products[]
+    createdAt     DateTime   @default(now())
+    updatedAt     DateTime   @updatedAt
+    products      products[]
 }
 
 model orders {
-    id             Int         @id @default(autoincrement())
+    id             Int          @id @default(autoincrement())
     product_id     Int
     quantity       Int
     transaction_id Int
-    product        products    @relation(fields: [product_id], references: [id])
-    transaction    transaction @relation(fields: [transaction_id], references: [id])
+    product        products     @relation(fields: [product_id], references: [id])
+    transaction    transaction? @relation(fields: [transaction_id], references: [id])
 }
 
 model transaction {
@@ -86,6 +86,7 @@ model transaction {
     delivery_rider_id Int?
     customer_id       Int
     transaction_type  transaction_type
+    status            transaction_status     @default(PENDING)
     delivery_fee      Float?
     orders            orders[]
     customer          customer         @relation(fields: [customer_id], references: [id])
@@ -99,7 +100,7 @@ model delivery_rider {
     id             Int           @id @default(autoincrement())
     admin_id       Int
     username       String        @unique
-    password     String
+    password       String
     first_name     String
     middle_name    String
     last_name      String
@@ -112,12 +113,13 @@ model delivery_rider {
 
 model customer {
     id             Int             @id @default(autoincrement())
-    admin_id       Int
     username       String          @unique
     password       String
     first_name     String
     middle_name    String
     last_name      String
+    address        String?
+    place_description String?
     contact_number String          @unique
     status         customer_status @default(REGISTERED)
     transactions   transaction[]
@@ -126,16 +128,16 @@ model customer {
 }
 
 model settings {
-    admin_id       Int      @id
-    delivery_fee   Float
-    contact_number String
-    email_address  String
-    store_name  String @default("Sample")
-    address        String
-    extra_details  String?
-    defaultPassForStaff String @default("Default123")
-    updatedAt      DateTime @updatedAt
-    admin          admin    @relation(fields: [admin_id], references: [id])
+    admin_id            Int      @id
+    delivery_fee        Float
+    contact_number      String
+    email_address       String
+    store_name          String   @default("Sample")
+    address             String
+    extra_details       String?
+    defaultPassForStaff String   @default("Default123")
+    updatedAt           DateTime @updatedAt
+    admin               admin    @relation(fields: [admin_id], references: [id])
 }
 
 model product_price_history {
@@ -165,6 +167,13 @@ enum transaction_type {
     DINE_IN
     PICK_UP
     DELIVERY
+}
+
+enum transaction_status {
+    PENDING
+    ONGOING
+    DONE
+    CANCELLED
 }
 
 // enum product_category {

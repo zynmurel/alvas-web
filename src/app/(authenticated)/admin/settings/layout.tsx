@@ -23,7 +23,7 @@ const Layout = ({
   const path = usePathname()
   return (
     <div className=" flex flex-col">
-      <div className="mx-auto grid w-full max-w-6xl gap-2">
+      <div className="mx-auto grid w-full max-w-7xl gap-2">
         <h1 className="text-3xl font-semibold">Staffs</h1>
         <div className="px-6 py-2 space-y-5 lg:px-10 lg:container">
           <div className="mx-auto grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
