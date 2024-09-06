@@ -13,7 +13,6 @@ import { CheckIcon, LoaderCircle, Truck } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useTransactionContext } from "../../layout";
 interface AssignRider { 
     riders:{
         label: string;
@@ -31,7 +30,6 @@ const AssignRiderForm = z.object({
 
 const AssignRider = ({riders, searchRider, setSearchRider, riderIsLoading, refetchTransaction}:AssignRider) => {
     const { id } = useParams()
-    const transactionContext = useTransactionContext()
     const form = useForm<z.infer<typeof AssignRiderForm>>({
         resolver: zodResolver(AssignRiderForm),
     });
@@ -39,7 +37,6 @@ const AssignRider = ({riders, searchRider, setSearchRider, riderIsLoading, refet
     const { mutateAsync:assignRiderToTransaction, isPending:assignRiderToTransactionIsPending } = api.transaction.assignRiderToTransaction.useMutation({
         onSuccess : () => {
             refetchTransaction()
-            transactionContext?.refetchTransaction()
             toast({
                 title : "Success",
                 "description" : "Rider assigned successfully. Transaction moved to ongoing."

@@ -7,15 +7,9 @@ import {
 } from "@/components/ui/tabs"
 import OrdersContent from "./_components/orders"
 import { api } from "@/trpc/react"
-import React, { createContext, useContext, useState } from "react"
+import React, { useState } from "react"
 
 type StatusType ="PENDING" | "ONGOING" | "DONE" | "CANCELLED"
-
-interface TransactionContextType { refetchTransaction : any}
-
-const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
-
-export const useTransactionContext = () => useContext(TransactionContext);
 
 const OrderPage = ({
   children,
@@ -74,9 +68,7 @@ const OrderPage = ({
             </Tabs>
           </div>
           <div>
-            <TransactionContext.Provider value={{refetchTransaction : refetch}}>
             {children}
-            </TransactionContext.Provider>
           </div>
         </main>
       </div>

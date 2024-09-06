@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { CardFooter } from "@/components/ui/card";
 import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
-import { useTransactionContext } from "../../layout";
 import { toast } from "@/components/ui/use-toast";
 interface AssignRider { 
     riderIsLoading : boolean;
@@ -10,11 +9,9 @@ interface AssignRider {
 }
 const CancelOrder = ({riderIsLoading, refetchTransaction}:AssignRider) => {
     const { id } = useParams()
-    const transactionContext = useTransactionContext()
     const { mutateAsync, isPending } = api.transaction.cancelTransaction.useMutation({
         onSuccess : () => {
             refetchTransaction()
-            transactionContext?.refetchTransaction()
             toast({
                 title : "Cancelled",
                 "description" : "Order cancelled."
