@@ -7,9 +7,15 @@ import {
 } from "@/components/ui/tabs"
 import OrdersContent from "./_components/orders"
 import { api } from "@/trpc/react"
-import React, { useState } from "react"
+import React, { createContext, useContext, useState } from "react"
 
 type StatusType ="PENDING" | "ONGOING" | "DONE" | "CANCELLED"
+
+interface TransactionContextType { refetchTransaction : () => Promise<void>}
+
+const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
+
+export const useTransactionContext = () => useContext(TransactionContext);
 
 const OrderPage = ({
   children,
@@ -19,6 +25,10 @@ const OrderPage = ({
   const { data:transactions, isLoading : transactionsIsLoading, isRefetching :transactionsIsRefetching, refetch } = api.transaction.getAdminOrders.useQuery({
     status
   })
+
+  const refetchTransaction = async () => {
+    await refetch()
+  }
 
   return (
     <div className=" flex flex-col">
@@ -68,7 +78,9 @@ const OrderPage = ({
             </Tabs>
           </div>
           <div>
+            <TransactionContext.Provider value={{refetchTransaction : refetchTransaction}}>
             {children}
+            </TransactionContext.Provider>
           </div>
         </main>
       </div>
