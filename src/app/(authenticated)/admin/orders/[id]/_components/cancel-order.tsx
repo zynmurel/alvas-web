@@ -10,11 +10,11 @@ interface AssignRider {
 }
 const CancelOrder = ({riderIsLoading, refetchTransaction}:AssignRider) => {
     const { id } = useParams()
-    const { refetchTransaction:refetchTransactions } = useTransactionContext()
+    const transactionContext = useTransactionContext()
     const { mutateAsync, isPending } = api.transaction.cancelTransaction.useMutation({
         onSuccess : () => {
             refetchTransaction()
-            refetchTransactions()
+            transactionContext?.refetchTransaction()
             toast({
                 title : "Cancelled",
                 "description" : "Order cancelled."

@@ -11,7 +11,9 @@ import React, { createContext, useContext, useState } from "react"
 
 type StatusType ="PENDING" | "ONGOING" | "DONE" | "CANCELLED"
 
-const TransactionContext = createContext({ refetchTransaction : () => {}});
+interface TransactionContextType { refetchTransaction : any}
+
+const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
 
 export const useTransactionContext = () => useContext(TransactionContext);
 

@@ -31,7 +31,7 @@ const AssignRiderForm = z.object({
 
 const AssignRider = ({riders, searchRider, setSearchRider, riderIsLoading, refetchTransaction}:AssignRider) => {
     const { id } = useParams()
-    const { refetchTransaction:refetchTransactions } = useTransactionContext()
+    const transactionContext = useTransactionContext()
     const form = useForm<z.infer<typeof AssignRiderForm>>({
         resolver: zodResolver(AssignRiderForm),
     });
@@ -39,7 +39,7 @@ const AssignRider = ({riders, searchRider, setSearchRider, riderIsLoading, refet
     const { mutateAsync:assignRiderToTransaction, isPending:assignRiderToTransactionIsPending } = api.transaction.assignRiderToTransaction.useMutation({
         onSuccess : () => {
             refetchTransaction()
-            refetchTransactions()
+            transactionContext?.refetchTransaction()
             toast({
                 title : "Success",
                 "description" : "Rider assigned successfully. Transaction moved to ongoing."
