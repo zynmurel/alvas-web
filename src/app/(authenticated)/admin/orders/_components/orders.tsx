@@ -1,7 +1,5 @@
 'use client'
 import * as React from "react"
-
-import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
@@ -17,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { api } from "@/trpc/react"
 import Loading from "./table-components/loading"
 import NoFound from "./table-components/no-found"
 import { DataPagination } from "./table-components/pagination"
@@ -34,8 +31,8 @@ const OrdersContent = ({
   status:$Enums.transaction_status;
   transactions :{
     id: number;
-    customer_name: string;
-    customer_contact: string;
+    customer_name?: string;
+    customer_contact?: string;
     sub_total: number;
     delivery_fee: number;
     total_amount: number;

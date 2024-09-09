@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/tabs"
 import OrdersContent from "./_components/orders"
 import { api } from "@/trpc/react"
-import React, { createContext, useContext, useState } from "react"
+import React, { useState } from "react"
 import { TransactionContext } from "./context/transaction"
 
 type StatusType ="PENDING" | "ONGOING" | "DONE" | "CANCELLED"
@@ -29,14 +29,13 @@ const OrderPage = ({
 
   return (
     <div className=" flex flex-col">
-      <div className="mx-auto grid w-full max-w-7xl gap-2">
+        <div className="mx-auto grid w-full max-w-7xl gap-2">
         <h1 className="text-3xl font-semibold">Delivery Orders</h1>
-
-        <main className="grid flex-1 gap-4 p-4 sm:px-6 sm:py-0 md:gap-4 lg:grid-cols-3 xl:grid-cols-3 min-h-[400px]">
+        <main className="grid flex-1 gap-4 p-4 sm:px-6 sm:py-0 md:gap-4 lg:grid-cols-3 xl:grid-cols-3 min-h-[400px] px-6 py-2 space-y-5 lg:px-10 lg:container">
           <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
             <Tabs defaultValue="PENDING" onValueChange={(e)=>setStatus(e as StatusType)}>
               <div className="flex items-center">
-                <TabsList>
+                <TabsList className="grid grid-cols-4 w-[400px]">
                   <TabsTrigger value="PENDING">Pending</TabsTrigger>
                   <TabsTrigger value="ONGOING">Ongoing</TabsTrigger>
                   <TabsTrigger value="DONE">Done</TabsTrigger>

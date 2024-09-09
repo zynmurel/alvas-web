@@ -1,323 +1,207 @@
-
+'use client'
 import Link from "next/link"
 import {
-  Activity,
-  ArrowUpRight,
-  CreditCard,
-  DollarSign,
-  Users,
+    ArrowUpRight,
+    LoaderCircle,
+    PhilippinePeso,
+    ShoppingCart,
+    Users,
 } from "lucide-react"
-
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table"
+import { api } from "@/trpc/react"
+import { formatCurrency } from "@/app/_utils/format"
+import { format } from "date-fns"
+import Loading from "./_components/table-components/loading"
+import NoFound from "./_components/table-components/no-found"
 
 const Page = () => {
-    return ( 
+    const { data, isPending } = api.dashboard.dashboardData.useQuery()
+    return (
         <div className=" flex flex-col">
-          <div className="mx-auto grid w-full max-w-7xl gap-2">
-            <h1 className="text-3xl font-semibold">Dashboard</h1>
-            <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8">
-            <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-                <Card x-chunk="dashboard-01-chunk-0">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                    Total Revenue
-                    </CardTitle>
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">$45,231.89</div>
-                    <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
-                    </p>
-                </CardContent>
-                </Card>
-                <Card x-chunk="dashboard-01-chunk-1">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                    Subscriptions
-                    </CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">+2350</div>
-                    <p className="text-xs text-muted-foreground">
-                    +180.1% from last month
-                    </p>
-                </CardContent>
-                </Card>
-                <Card x-chunk="dashboard-01-chunk-2">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                    <CreditCard className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">+12,234</div>
-                    <p className="text-xs text-muted-foreground">
-                    +19% from last month
-                    </p>
-                </CardContent>
-                </Card>
-                <Card x-chunk="dashboard-01-chunk-3">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-                    <Activity className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">+573</div>
-                    <p className="text-xs text-muted-foreground">
-                    +201 since last hour
-                    </p>
-                </CardContent>
-                </Card>
+            <div className="mx-auto grid w-full max-w-7xl gap-2">
+                <h1 className="text-3xl font-semibold">Dashboard</h1>
+                <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8">
+                    <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+                        <Card x-chunk="dashboard-01-chunk-0">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Sales this Month
+                                </CardTitle>
+                                <PhilippinePeso className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : formatCurrency(data?.salesThisMonth || 0)}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    Total sales for the month of {format(new Date(), "MMMM")}
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card x-chunk="dashboard-01-chunk-1">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Customers
+                                </CardTitle>
+                                <Users className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : data?.totalUsers}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    Total registered users in your store.
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card x-chunk="dashboard-01-chunk-1">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Products
+                                </CardTitle>
+                                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : data?.totalProducts}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    Number of products available.
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card x-chunk="dashboard-01-chunk-2">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Overall Sales</CardTitle>
+                                <PhilippinePeso className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : formatCurrency(data?.overAllSales || 0)}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    Total of your overall sale.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                    <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-4">
+                        <Card
+                            className="xl:col-span-2" x-chunk="dashboard-01-chunk-4"
+                        >
+                            <CardHeader className="flex flex-row items-center">
+                                <div className="grid gap-2">
+                                    <CardTitle>Delivery Orders</CardTitle>
+                                    <CardDescription>
+                                        Recent orders from your store.
+                                    </CardDescription>
+                                </div>
+                                <Button asChild size="sm" className="ml-auto gap-1">
+                                    <Link href="/admin/orders">
+                                        Manage
+                                        <ArrowUpRight className="h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Customer</TableHead>
+                                            <TableHead className="">
+                                                Status
+                                            </TableHead>
+                                            <TableHead className="text-right">Amount</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {
+                                            data?.preShowOrders.map((order) => {
+                                                return (
+                                                    <TableRow key={order.id}>
+                                                        <TableCell>
+                                                            <div className="font-medium capitalize">{order.customer}</div>
+                                                            <div className="hidden text-sm text-muted-foreground md:inline">
+                                                                {order.contact}
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Badge className="text-xs capitalize" variant={
+                                                                order.status === "PENDING" ? "outline" : order.status === "ONGOING" ? "outline" : order.status === "CANCELLED" ? "destructive" : "default"
+                                                            }>
+                                                                {order.status}
+                                                            </Badge>
+                                                        </TableCell>
+                                                        <TableCell className="text-right">{formatCurrency(order.total_amount || 0)}</TableCell>
+                                                    </TableRow>
+                                                )
+                                            })
+                                        }
+                                    </TableBody>
+                                </Table>
+                                    {isPending && <Loading />}
+                                    {!isPending && !data?.preShowOrders?.length && <NoFound />}
+                            </CardContent>
+                        </Card>
+                        <Card
+                            className="xl:col-span-2" x-chunk="dashboard-01-chunk-4"
+                        >
+                            <CardHeader className="flex flex-row items-center">
+                                <div className="grid gap-2">
+                                    <CardTitle>Transactions</CardTitle>
+                                    <CardDescription>
+                                        Recent transactions made from your store.
+                                    </CardDescription>
+                                </div>
+                                <Button asChild size="sm" className="ml-auto gap-1">
+                                    <Link href="/admin/transaction">
+                                        View all
+                                        <ArrowUpRight className="h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Processed By</TableHead>
+                                            <TableHead className="text-right">Amount</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {
+                                            data?.preShowTransactions.map((trans) => {
+                                                return (
+                                                    <TableRow key={trans.id}>
+                                                        <TableCell>
+                                                            <div className="font-medium">{trans.proccessed_by}</div>
+                                                            <div className="text-sm text-muted-foreground inline capitalize">
+                                                                {trans.type.toLowerCase()}
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="text-right">{formatCurrency(trans.total_amount)}</TableCell>
+                                                    </TableRow>)
+                                            })
+                                        }
+                                    </TableBody>
+                                </Table>
+                                    {isPending && <Loading />}
+                                    {!isPending && !data?.preShowTransactions?.length && <NoFound />}
+                            </CardContent>
+                        </Card>
+                    </div>
+                </main>
             </div>
-            <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-4">
-                <Card
-                className="xl:col-span-2" x-chunk="dashboard-01-chunk-4"
-                >
-                <CardHeader className="flex flex-row items-center">
-                    <div className="grid gap-2">
-                    <CardTitle>Transactions</CardTitle>
-                    <CardDescription>
-                        Recent transactions from your store.
-                    </CardDescription>
-                    </div>
-                    <Button asChild size="sm" className="ml-auto gap-1">
-                    <Link href="#">
-                        View All
-                        <ArrowUpRight className="h-4 w-4" />
-                    </Link>
-                    </Button>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                    <TableHeader>
-                        <TableRow>
-                        <TableHead>Customer</TableHead>
-                        <TableHead className="hidden xl:table-column">
-                            Type
-                        </TableHead>
-                        <TableHead className="hidden xl:table-column">
-                            Status
-                        </TableHead>
-                        <TableHead className="hidden xl:table-column">
-                            Date
-                        </TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        <TableRow>
-                        <TableCell>
-                            <div className="font-medium">Liam Johnson</div>
-                            <div className="hidden text-sm text-muted-foreground md:inline">
-                            liam@example.com
-                            </div>
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            Sale
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            <Badge className="text-xs" variant="outline">
-                            Approved
-                            </Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                            2023-06-23
-                        </TableCell>
-                        <TableCell className="text-right">$250.00</TableCell>
-                        </TableRow>
-                        <TableRow>
-                        <TableCell>
-                            <div className="font-medium">Olivia Smith</div>
-                            <div className="hidden text-sm text-muted-foreground md:inline">
-                            olivia@example.com
-                            </div>
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            Refund
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            <Badge className="text-xs" variant="outline">
-                            Declined
-                            </Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                            2023-06-24
-                        </TableCell>
-                        <TableCell className="text-right">$150.00</TableCell>
-                        </TableRow>
-                        <TableRow>
-                        <TableCell>
-                            <div className="font-medium">Noah Williams</div>
-                            <div className="hidden text-sm text-muted-foreground md:inline">
-                            noah@example.com
-                            </div>
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            Subscription
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            <Badge className="text-xs" variant="outline">
-                            Approved
-                            </Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                            2023-06-25
-                        </TableCell>
-                        <TableCell className="text-right">$350.00</TableCell>
-                        </TableRow>
-                        <TableRow>
-                        <TableCell>
-                            <div className="font-medium">Emma Brown</div>
-                            <div className="hidden text-sm text-muted-foreground md:inline">
-                            emma@example.com
-                            </div>
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            Sale
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            <Badge className="text-xs" variant="outline">
-                            Approved
-                            </Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                            2023-06-26
-                        </TableCell>
-                        <TableCell className="text-right">$450.00</TableCell>
-                        </TableRow>
-                        <TableRow>
-                        <TableCell>
-                            <div className="font-medium">Liam Johnson</div>
-                            <div className="hidden text-sm text-muted-foreground md:inline">
-                            liam@example.com
-                            </div>
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            Sale
-                        </TableCell>
-                        <TableCell className="hidden xl:table-column">
-                            <Badge className="text-xs" variant="outline">
-                            Approved
-                            </Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                            2023-06-27
-                        </TableCell>
-                        <TableCell className="text-right">$550.00</TableCell>
-                        </TableRow>
-                    </TableBody>
-                    </Table>
-                </CardContent>
-                </Card>
-                <Card x-chunk="dashboard-01-chunk-5" className="xl:col-span-2">
-                <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
-                </CardHeader>
-                <CardContent className="grid gap-8">
-                    <div className="flex items-center gap-4">
-                    <Avatar className="hidden h-9 w-9 sm:flex">
-                        <AvatarImage src="/avatars/01.png" alt="Avatar" />
-                        <AvatarFallback>OM</AvatarFallback>
-                    </Avatar>
-                    <div className="grid gap-1">
-                        <p className="text-sm font-medium leading-none">
-                        Olivia Martin
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                        olivia.martin@email.com
-                        </p>
-                    </div>
-                    <div className="ml-auto font-medium">+$1,999.00</div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                    <Avatar className="hidden h-9 w-9 sm:flex">
-                        <AvatarImage src="/avatars/02.png" alt="Avatar" />
-                        <AvatarFallback>JL</AvatarFallback>
-                    </Avatar>
-                    <div className="grid gap-1">
-                        <p className="text-sm font-medium leading-none">
-                        Jackson Lee
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                        jackson.lee@email.com
-                        </p>
-                    </div>
-                    <div className="ml-auto font-medium">+$39.00</div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                    <Avatar className="hidden h-9 w-9 sm:flex">
-                        <AvatarImage src="/avatars/03.png" alt="Avatar" />
-                        <AvatarFallback>IN</AvatarFallback>
-                    </Avatar>
-                    <div className="grid gap-1">
-                        <p className="text-sm font-medium leading-none">
-                        Isabella Nguyen
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                        isabella.nguyen@email.com
-                        </p>
-                    </div>
-                    <div className="ml-auto font-medium">+$299.00</div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                    <Avatar className="hidden h-9 w-9 sm:flex">
-                        <AvatarImage src="/avatars/04.png" alt="Avatar" />
-                        <AvatarFallback>WK</AvatarFallback>
-                    </Avatar>
-                    <div className="grid gap-1">
-                        <p className="text-sm font-medium leading-none">
-                        William Kim
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                        will@email.com
-                        </p>
-                    </div>
-                    <div className="ml-auto font-medium">+$99.00</div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                    <Avatar className="hidden h-9 w-9 sm:flex">
-                        <AvatarImage src="/avatars/05.png" alt="Avatar" />
-                        <AvatarFallback>SD</AvatarFallback>
-                    </Avatar>
-                    <div className="grid gap-1">
-                        <p className="text-sm font-medium leading-none">
-                        Sofia Davis
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                        sofia.davis@email.com
-                        </p>
-                    </div>
-                    <div className="ml-auto font-medium">+$39.00</div>
-                    </div>
-                </CardContent>
-                </Card>
-            </div>
-            </main>
-          </div>
         </div>
-        );
+    );
 }
- 
+
 export default Page;

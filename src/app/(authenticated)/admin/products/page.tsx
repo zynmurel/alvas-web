@@ -47,7 +47,7 @@ type StatusType ="ALL" | "AVAILABLE" | "NOT_AVAILABLE"
 type CategoryType = undefined | number
 const ProductsPage = () => {
   const router = useRouter()
-  const [status, setStatus] = useState<StatusType>("ALL")
+  const [status, setStatus] = useState<StatusType>("AVAILABLE")
   const [category, setCategory] = useState<CategoryType>(undefined)
   const [pagination, setPagination] = useState<PaginationType>({
     take:10,
@@ -83,11 +83,11 @@ const ProductsPage = () => {
             <div className=" flex flex-row items-center justify-between">
               <h1 className="text-3xl font-semibold">Products</h1>
               </div>
-            <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+            <main className="px-6 py-2 space-y-5 lg:px-10 lg:container">
               <Tabs defaultValue={status} onValueChange={(e)=>setStatus(e as StatusType)}>
                 <div className="flex items-center">
-                  <TabsList>
-                    <TabsTrigger value="ALL">All</TabsTrigger>
+                  <TabsList className="grid grid-cols-2 w-[200px]">
+                    {/* <TabsTrigger value="ALL">All</TabsTrigger> */}
                     <TabsTrigger value="AVAILABLE">Active</TabsTrigger>
                     <TabsTrigger value="NOT_AVAILABLE">Archived</TabsTrigger>
                   </TabsList>

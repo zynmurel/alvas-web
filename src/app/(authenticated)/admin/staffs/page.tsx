@@ -10,7 +10,7 @@ const Staffs = () => {
   return ( 
       <div className="w-full">
           <Tabs defaultValue="cashier">
-            <TabsList className="grid grid-cols-2 w-[400px]">
+            <TabsList className="grid grid-cols-2 w-[200px]">
               <TabsTrigger value="cashier">Cashier</TabsTrigger>
               <TabsTrigger value="rider">Rider</TabsTrigger>
             </TabsList>

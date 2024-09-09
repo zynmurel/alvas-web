@@ -1,18 +1,14 @@
 'use client'
 import {
-  LoaderCircle,
   MoreHorizontal,
-  PackageSearch,
   PlusCircle,
 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,7 +18,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -34,7 +29,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useRouter } from "next/navigation"
 import { api } from "@/trpc/react"
 import { useState } from "react"
 import CreateCategory from "./_components/create-category"
@@ -47,7 +41,6 @@ type CategoryType = undefined | {
   name:string | undefined;
 }
 const ProductsPage = () => {
-  const router = useRouter()
   const [category, setCategory] = useState<CategoryType>(undefined)
   const [pagination, setPagination] = useState<PaginationType>({
     take:10,

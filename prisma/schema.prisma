@@ -30,6 +30,8 @@ model admin {
     cashiers           cashier[]
     delivery_rider     delivery_rider[]
     settings           settings?
+
+    transaction transaction[]
 }
 
 model cashier {
@@ -80,20 +82,22 @@ model orders {
 }
 
 model transaction {
-    id                Int              @id @default(autoincrement())
+    id                Int                @id @default(autoincrement())
     total_amount      Float
+    admin_id          Int
     cashier_id        Int?
     delivery_rider_id Int?
     customer_id       Int
     transaction_type  transaction_type
-    status            transaction_status     @default(PENDING)
-    delivery_fee      Float?
+    status            transaction_status @default(PENDING)
+    delivery_fee      Float
     orders            orders[]
-    customer          customer         @relation(fields: [customer_id], references: [id])
-    cashier           cashier?         @relation(fields: [cashier_id], references: [id])
-    rider             delivery_rider?  @relation(fields: [delivery_rider_id], references: [id])
-    createdAt         DateTime         @default(now())
-    updatedAt         DateTime         @updatedAt
+    customer          customer?           @relation(fields: [customer_id], references: [id])
+    admin             admin              @relation(fields: [admin_id], references: [id])
+    cashier           cashier?           @relation(fields: [cashier_id], references: [id])
+    rider             delivery_rider?    @relation(fields: [delivery_rider_id], references: [id])
+    createdAt         DateTime           @default(now())
+    updatedAt         DateTime           @updatedAt
 }
 
 model delivery_rider {
@@ -112,19 +116,19 @@ model delivery_rider {
 }
 
 model customer {
-    id             Int             @id @default(autoincrement())
-    username       String          @unique
-    password       String
-    first_name     String
-    middle_name    String
-    last_name      String
-    address        String?
+    id                Int             @id @default(autoincrement())
+    username          String          @unique
+    password          String
+    first_name        String
+    middle_name       String
+    last_name         String
+    address           String?
     place_description String?
-    contact_number String          @unique
-    status         customer_status @default(REGISTERED)
-    transactions   transaction[]
-    createdAt      DateTime        @default(now())
-    updatedAt      DateTime        @updatedAt
+    contact_number    String          @unique
+    status            customer_status @default(REGISTERED)
+    transactions      transaction[]
+    createdAt         DateTime        @default(now())
+    updatedAt         DateTime        @updatedAt
 }
 
 model settings {

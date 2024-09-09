@@ -16,13 +16,17 @@ const paths = [
         path : '/admin/orders',
     },
     {
+        title : "Transactions",
+        path : '/admin/transaction',
+    },
+    {
         title : "Products",
         path : '/admin/products',
     },
-    {
-        title : "Customers",
-        path : '/admin/customers',
-    },
+    // {
+    //     title : "Customers",
+    //     path : '/admin/customers',
+    // },
     {
         title : "Staffs",
         path : '/admin/staffs',
