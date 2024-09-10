@@ -74,7 +74,7 @@ const CreateCategory = ({category_id, closeDialog, category_name, refetchCategor
         <form onSubmit={form.handleSubmit(onSubmitCategory)} className="flex flex-col w-full space-y-6">
           <div className="w-full">
             <div className="flex justify-center items-center flex-col">
-              <div className=" w-full bg-white flex flex-col gap-3">
+              <div className=" w-full flex flex-col gap-3">
               <FormField
                   control={form.control}
                   name="category_name"

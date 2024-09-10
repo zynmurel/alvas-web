@@ -1,6 +1,4 @@
 'use client'
-
-import { Toaster } from "@/components/ui/toaster"
 import { useStore } from "@/lib/store/app"
 import axios from "axios"
 import { useEffect } from "react"
@@ -29,8 +27,7 @@ const Template = ({
         (async()=>await logout())
       }
     },[])
-    return ( <>
-        <Toaster />{children}</> );
+    return ( <>{children}</> );
 }
  
 export default Template;

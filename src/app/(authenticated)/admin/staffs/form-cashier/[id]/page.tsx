@@ -96,7 +96,7 @@ const FormCashier = () => {
     return (
 
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmitProduct)} className="flex flex-col w-full space-y-6 bg-white p-5 sm:px-10 border rounded-lg shadow-md">
+            <form onSubmit={form.handleSubmit(onSubmitProduct)} className="flex flex-col w-full space-y-6 p-5 sm:px-10 border rounded-lg shadow-md">
                 <div className="w-full space-y-6">
                     <h1 className="font-semibold text-xl">{id !== "new" ? "Update Cashier" : "Create Cashier"}</h1>
 
@@ -107,7 +107,7 @@ const FormCashier = () => {
                             name="first_name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-gray-600">First Name</FormLabel>
+                                    <FormLabel className="">First Name</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Input first name" />
                                     </FormControl>
@@ -124,7 +124,7 @@ const FormCashier = () => {
                             name="middle_name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-gray-600">Middle Name</FormLabel>
+                                    <FormLabel className="">Middle Name</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Input middle name" />
                                     </FormControl>
@@ -141,7 +141,7 @@ const FormCashier = () => {
                             name="last_name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-gray-600">Last Name</FormLabel>
+                                    <FormLabel className="">Last Name</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Input last name" />
                                     </FormControl>
@@ -158,7 +158,7 @@ const FormCashier = () => {
                             name="username"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-gray-600">Username</FormLabel>
+                                    <FormLabel className="">Username</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Input username" {...field} />
                                     </FormControl>
