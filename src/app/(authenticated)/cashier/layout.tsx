@@ -3,6 +3,7 @@ import UserProfile from "./_components/user"
 import CashierNavigation from "./_components/navigation"
 import { getSession } from "@/lib/session"
 import { redirect } from "next/navigation"
+import { ModeToggle } from "@/app/_components/theme-mode"
 
 export default function Dashboard({
     children,
@@ -13,9 +14,10 @@ export default function Dashboard({
     }
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 justify-between">
+      <header className="sticky top-0 flex h-16 z-20 items-center gap-4 border-b bg-background px-4 md:px-6 justify-between">
         <CashierNavigation/>
         <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+          <ModeToggle/>
             <UserProfile/>
         </div>
       </header>

@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { setHours } from "date-fns";
 
 export const transactionRouter = createTRPCRouter({
   getAdminOrders: publicProcedure
@@ -158,7 +157,7 @@ export const transactionRouter = createTRPCRouter({
           0,
         );
         const total_delivery_fee = transactions.reduce(
-          (accumulator, currentValue) => accumulator + currentValue.delivery_fee,
+          (accumulator, currentValue) => accumulator + (currentValue.delivery_fee || 0),
           0,
         );
         return {

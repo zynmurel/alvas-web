@@ -2,11 +2,9 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getSession } from './lib/session';
 
 export async function middleware(req: NextRequest) {
-  const session = getSession();
-
+  console.log(req)
   return NextResponse.next();
 }
 

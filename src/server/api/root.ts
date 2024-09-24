@@ -1,12 +1,13 @@
-import { postRouter } from "@/server/api/routers/post";
+import { postRouter } from "@/server/api/routers/admin/post";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
-import { productRouter } from "./routers/product";
-import { categoryRouter } from "./routers/category";
-import { settingsRouter } from "./routers/settings";
-import { cashierRouter } from "./routers/cashier";
-import { riderRouter } from "./routers/rider";
-import { transactionRouter } from "./routers/transaction";
-import { dashboardRouter } from "./routers/dashboard";
+import { productRouter } from "./routers/admin/product";
+import { categoryRouter } from "./routers/admin/category";
+import { settingsRouter } from "./routers/admin/settings";
+import { cashierRouter } from "./routers/admin/cashier";
+import { riderRouter } from "./routers/admin/rider";
+import { transactionRouter } from "./routers/admin/transaction";
+import { dashboardRouter } from "./routers/admin/dashboard";
+import { cashierOrderRouter } from "./routers/cashier/orders";
 
 /**
  * This is the primary router for your server.
@@ -21,7 +22,10 @@ export const appRouter = createTRPCRouter({
   cashier : cashierRouter,
   rider : riderRouter,
   transaction  : transactionRouter,
-  dashboard : dashboardRouter
+  dashboard : dashboardRouter,
+  user_cashier : {
+    order : cashierOrderRouter
+  }
 });
 
 // export type definition of API

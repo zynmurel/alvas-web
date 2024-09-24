@@ -124,3 +124,7 @@
     --chart-5: 340 75% 55%;
   }
 }
+
+.bg-background {
+  background-color: hsl(var(--background));
+}

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 import {
   ListFilter,
@@ -50,7 +51,7 @@ const ProductsPage = () => {
   const [status, setStatus] = useState<StatusType>("AVAILABLE")
   const [category, setCategory] = useState<CategoryType>(undefined)
   const [pagination, setPagination] = useState<PaginationType>({
-    take:10,
+    take:8,
     skip:0
   })
 
@@ -214,7 +215,7 @@ const ProductsPage = () => {
                       </Table>
                       {productsIsLoading && <div className=" w-full flex p-5 justify-center items-center gap-2 flex-row text-gray-500"><LoaderCircle className=" animate-spin" />Loading...</div>}
                       {!productsIsLoading && !products?.length && <div className=" w-full flex p-5 justify-center items-center gap-2 flex-row text-gray-500"><PackageSearch/>No Products Found</div>}
-                      <DataPagination count={categories?.length || 0} filter={pagination} setFilter={setPagination}/>
+                      <DataPagination count={products?.length || 0} filter={pagination} setFilter={setPagination}/>
                     </CardContent>
                     {/* <CardFooter>
                       <div className="text-xs text-muted-foreground">

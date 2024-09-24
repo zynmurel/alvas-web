@@ -8,24 +8,16 @@ import { usePathname } from "next/navigation"
 
 const paths = [
     {
-        title : "Dashboard",
-        path : '/admin',
-    },
-    {
         title : "Orders",
-        path : '/admin/orders',
+        path : '/cashier',
     },
     {
-        title : "Products",
-        path : '/admin/products',
-    },
-    {
-        title : "Customers",
-        path : '/admin/customers',
+        title : "Transactions",
+        path : '/cashier/transactions',
     },
     {
         title : "Settings",
-        path : '/admin/settings',
+        path : '/cashier/settings',
     }
 ]
 
@@ -38,8 +30,7 @@ const CashierNavigation = () => {
             href="#"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
-            <Package2 className="h-6 w-6" />
-            <span className="sr-only">Acme Inc</span>
+            <img src="/images/logo.png" alt="logo" className=" w-32"/>
           </Link>
           {
             paths.map((path, index)=>(

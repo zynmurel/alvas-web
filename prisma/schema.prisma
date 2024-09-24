@@ -87,10 +87,10 @@ model transaction {
     admin_id          Int
     cashier_id        Int?
     delivery_rider_id Int?
-    customer_id       Int
+    customer_id       Int?
     transaction_type  transaction_type
     status            transaction_status @default(PENDING)
-    delivery_fee      Float
+    delivery_fee      Float?
     orders            orders[]
     customer          customer?           @relation(fields: [customer_id], references: [id])
     admin             admin              @relation(fields: [admin_id], references: [id])

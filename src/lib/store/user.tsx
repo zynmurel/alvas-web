@@ -1,5 +1,5 @@
-import { User } from '../types/user.type';
-import { StateCreator } from 'zustand'
+import { type User } from '../types/user.type';
+import { type StateCreator } from 'zustand'
 
 export interface UserSlice {
     user: User | null,

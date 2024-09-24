@@ -1,4 +1,4 @@
-import { z } from "zod";
+
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { setHours, startOfMonth } from "date-fns";
@@ -50,7 +50,7 @@ export const dashboardRouter = createTRPCRouter({
                 customer : `${cust.customer?.first_name} ${cust.customer?.middle_name[0]}. ${cust.customer?.last_name}`,
                 contact : cust.customer?.contact_number || "",
                 status : cust.status,
-                total_amount : cust.delivery_fee + cust.total_amount
+                total_amount : (cust.delivery_fee || 0) + cust.total_amount
             }
         }))
 
@@ -66,7 +66,7 @@ export const dashboardRouter = createTRPCRouter({
                 id:cust.id,
                 proccessed_by : `${proccessed_by?.first_name} ${proccessed_by?.middle_name[0]}. ${proccessed_by?.last_name}`,
                 type : cust.rider ? "Rider" : "Cashier",
-                total_amount : cust.delivery_fee + cust.total_amount
+                total_amount : (cust.delivery_fee||0) + cust.total_amount
             }
         }))
         

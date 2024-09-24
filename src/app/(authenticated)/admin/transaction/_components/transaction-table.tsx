@@ -16,7 +16,7 @@ type Transactions = {
     } | null;
     transact_by_type: string;
     transaction_type :string;
-    delivery_fee: number;
+    delivery_fee: number | null;
 }[] | undefined
 
 export default function TransactionTable({transactions}:{transactions:Transactions}) {

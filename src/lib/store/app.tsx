@@ -1,6 +1,6 @@
 import { StoreApi, UseBoundStore, create } from "zustand";
 import { shallow } from "zustand/shallow";
-import { UserSlice, createUserSlice } from "./user";
+import {type  UserSlice, createUserSlice } from "./user";
 
 type WithSelectors<S> = S extends { getState: () => infer T }
   ? S & { use: { [K in keyof T]: () => T[K] } }
