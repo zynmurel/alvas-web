@@ -1,18 +1,15 @@
+/* eslint-disable @next/next/no-img-element */
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ProductType } from "../page";
+import { type ProductType } from "../page";
 import { formatCurrency } from "@/app/_utils/format";
-import { Dispatch, SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 
 export function AddOrderModal({ open, setOpen, setSelectedProducts }: {
     open: ProductType | undefined;

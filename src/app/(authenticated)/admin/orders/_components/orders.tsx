@@ -21,12 +21,11 @@ import { DataPagination } from "./table-components/pagination"
 import { type PaginationType } from "@/lib/types/pagination"
 import { formatCurrency } from "@/app/_utils/format"
 import { useParams, useRouter } from "next/navigation"
-import { $Enums } from "@prisma/client"
+import { type $Enums } from "@prisma/client"
 const OrdersContent = ({
   status,
   transactions,
   transactionsIsLoading,
-  transactionsIsRefetching
 }:{
   status:$Enums.transaction_status;
   transactions :{

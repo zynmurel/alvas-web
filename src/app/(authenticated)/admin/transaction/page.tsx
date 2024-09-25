@@ -103,7 +103,7 @@ const Transactions = () => {
             {transactionType.toLowerCase().replace("_", " ")} Transactions
           </CardHeader>
           <CardContent>
-            <TransactionTable transactions={transactions?.transactions} />
+            <TransactionTable transactions={transactions?.transactions?.slice(pagination.skip, pagination.skip+pagination.take)} />
             {transactionsIsPending && <Loading />}
             {!transactionsIsPending && !transactions?.transactions?.length && <NoFound />}
             <DataPagination count={transactions?.transactions?.length || 0} filter={pagination} setFilter={setPagination} />

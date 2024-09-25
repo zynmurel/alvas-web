@@ -33,7 +33,7 @@ import { api } from "@/trpc/react"
 import { useState } from "react"
 import CreateCategory from "./_components/create-category"
 import { DataPagination } from "./_components/table-components/pagination"
-import { PaginationType } from "@/lib/types/pagination"
+import { type PaginationType } from "@/lib/types/pagination"
 import Loading from "./_components/table-components/loading"
 import NoFound from "./_components/table-components/no-found"
 type CategoryType = undefined | {

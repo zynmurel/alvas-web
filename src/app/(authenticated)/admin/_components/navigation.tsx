@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 import Link from "next/link"
 import { Menu, Package2 } from "lucide-react"

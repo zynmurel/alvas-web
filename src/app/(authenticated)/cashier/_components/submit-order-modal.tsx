@@ -5,7 +5,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { ProductType } from "../page";
+import { type ProductType } from "../page";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/app/_utils/format";
 import { Button } from "@/components/ui/button";

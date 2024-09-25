@@ -66,7 +66,7 @@ const CreateCategory = ({category_id, closeDialog, category_name, refetchCategor
   
   useEffect(()=>{
     !!category_name && form.setValue("category_name", category_name)
-  },[category_id, category_name])
+  },[category_id, category_name, form])
 
   return (
     <div>

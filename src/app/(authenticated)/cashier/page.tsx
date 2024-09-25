@@ -10,11 +10,8 @@ import {
 } from "@/components/ui/card"
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { api } from "@/trpc/react"
@@ -23,7 +20,7 @@ import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { type $Enums } from "@prisma/client"
 import { Separator } from "@/components/ui/separator"
-import { ListFilter, MoreVertical } from "lucide-react"
+import { MoreVertical } from "lucide-react"
 import { AddOrderModal } from "./_components/add-order-modal"
 import { formatCurrency } from "@/app/_utils/format"
 import { SubmitOrderModal } from "./_components/submit-order-modal"
@@ -91,7 +88,7 @@ const Page = () => {
                 <p className="text-muted-foreground -mt-2 mb-2">Select products and fulfill customer orders.</p>
                 <main className="flex flex-1 flex-col gap-4 md:gap-8">
                     <div className="grid gap-4 md:gap-8 sm:grid-cols-2 md:grid-cols-3">
-                        <div className=" md:col-span-2">
+                        <div className=" md:col-span-2 w-full overflow-auto">
                             <Card x-chunk="dashboard-01-chunk-0" className=" bg-transparent border-none shadow-none">
                                 <CardHeader className=" flex flex-row justify-between items-end">
                                     <div>
@@ -125,7 +122,7 @@ const Page = () => {
                                             productsToShow()?.map((prod) => {
                                                 return <div key={prod.category} className=" w-full">
                                                     <p className=" font-semibold text-lg">{prod.category}</p>
-                                                    <div className="  w-full overflow-hidden overflow-x-auto flex flex-row p-5 px-2 gap-3 ">
+                                                    <div className={`  w-full overflow-hidden overflow-x-auto flex  flex-row p-5 px-2 gap-3 ${category!=="ALL" && 'flex-wrap'}`}>
                                                         {
                                                             prod.products.map((product) => {
                                                                 return <div onClick={()=>setSelectedProduct({...product, quantity : 1})} key={product.id} className={` hover:scale-105 transition-all cursor-pointer flex flex-col flex-none h-52 border justify-end rounded w-40 relative overflow-hidden`}>

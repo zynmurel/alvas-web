@@ -8,7 +8,7 @@ interface AssignRider {
     riderIsLoading : boolean;
     refetchTransaction: ()=>void
 }
-const CancelOrder = ({riderIsLoading, refetchTransaction}:AssignRider) => {
+const CancelOrder = ({refetchTransaction}:AssignRider) => {
     const { id } = useParams()
     const trContext = useTransactionContext()
     const { mutateAsync, isPending } = api.transaction.cancelTransaction.useMutation({
