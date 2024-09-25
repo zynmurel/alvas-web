@@ -332,7 +332,7 @@ const Page = () => {
                                             }))} placeholder="Input new password" />
                                         <div
                                             onClick={() => setEmployeePassword(prev => ({
-                                                ...prev, password: {
+                                                ...prev, newPassword: {
                                                     ...prev.newPassword,
                                                     show: !prev.newPassword.show
                                                 }
@@ -355,7 +355,7 @@ const Page = () => {
                                             }))} placeholder="Input password" />
                                         <div
                                             onClick={() => setEmployeePassword(prev => ({
-                                                ...prev, password: {
+                                                ...prev, confirmNewPassword: {
                                                     ...prev.confirmNewPassword,
                                                     show: !prev.confirmNewPassword.show
                                                 }
