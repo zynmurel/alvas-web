@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 import Link from "next/link"
-import { Menu, Package2 } from "lucide-react"
+import { CircleUser, LayoutList, Menu, Package2, Salad } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -11,14 +11,17 @@ const paths = [
     {
         title : "Orders",
         path : '/cashier',
+        icon : <Salad className="w-4 h-4" />
     },
     {
         title : "Transactions",
         path : '/cashier/transactions',
+        icon : <LayoutList className="w-4 h-4" />
     },
     {
-        title : "Settings",
-        path : '/cashier/settings',
+        title : "Account",
+        path : '/cashier/account',
+        icon : <CircleUser className="w-4 h-4" />
     }
 ]
 
@@ -38,9 +41,9 @@ const CashierNavigation = () => {
                 <Link
                 key={index}
                   href={path.path}
-                  className={`${path.path !== pathname && 'text-muted-foreground '} transition-colors hover:text-foreground`}
+                  className={`${path.path !== pathname && 'text-muted-foreground '} flex flex-row gap-1 items-center transition-colors hover:text-foreground`}
                 >
-                  {path.title}
+                  {path.icon}{path.title}
                 </Link>
                 ))
           }

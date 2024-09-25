@@ -1,3 +1,4 @@
+import { ModeToggle } from "@/app/_components/theme-mode";
 import "@/styles/globals.css";
 import { type Metadata } from "next";
 
@@ -11,15 +12,15 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // const session = getSession()
-  // console.log(session)
   return (
-    <div className=" w-full flex flex-row h-screen  bg-gray-500 bg-[url('/bg.jpg')] bg-cover">
+    <div className=" w-full flex flex-row h-screen  bg-[url('/bg.jpg')] bg-cover relative">
+      <div className=" absolute top-5 left-5">
+
+      <ModeToggle/>
+      </div>
         {/* <div className=" hidden md:flex flex-1">
         </div> */}
-        <div className=" flex-1 flex items-center justify-center bg-black bg-opacity-50">
         {children}
-        </div>
     </div>
   );
 }

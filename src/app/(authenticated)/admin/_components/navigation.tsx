@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 import Link from "next/link"
-import { Menu, Package2 } from "lucide-react"
+import { LayoutDashboard, LayoutList, Menu, Package2, Salad, Settings, ShoppingCart, UserPlus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -11,18 +11,22 @@ const paths = [
     {
         title : "Dashboard",
         path : '/admin',
+        icon : <LayoutDashboard className="w-4 h-4" />
     },
     {
         title : "Orders",
         path : '/admin/orders',
+        icon : <ShoppingCart className="w-4 h-4" />
     },
     {
         title : "Transactions",
         path : '/admin/transaction',
+        icon : <LayoutList className="w-4 h-4" />
     },
     {
         title : "Products",
         path : '/admin/products',
+        icon : <Salad className="w-4 h-4" />
     },
     // {
     //     title : "Customers",
@@ -31,10 +35,12 @@ const paths = [
     {
         title : "Staffs",
         path : '/admin/staffs',
+        icon : <UserPlus className="w-4 h-4" />
     },
     {
         title : "Settings",
         path : '/admin/settings',
+        icon : <Settings className="w-4 h-4" />
     }
 ]
 
@@ -51,13 +57,13 @@ const AdminNavigation = () => {
           </Link>
           {
             paths.map((path, index)=>(
-                <Link
-                key={index}
-                  href={path.path}
-                  className={`${path.path !== pathname && 'text-muted-foreground '} transition-colors hover:text-foreground`}
-                >
-                  {path.title}
-                </Link>
+              <Link
+              key={index}
+                href={path.path}
+                className={`${path.path !== pathname && 'text-muted-foreground '} flex flex-row gap-1 items-center transition-colors hover:text-foreground`}
+              >
+                {path.icon}{path.title}
+              </Link>
                 ))
           }
         </nav>

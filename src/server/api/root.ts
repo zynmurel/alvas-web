@@ -9,6 +9,8 @@ import { transactionRouter } from "./routers/admin/transaction";
 import { dashboardRouter } from "./routers/admin/dashboard";
 import { cashierOrderRouter } from "./routers/cashier/orders";
 import { cashierTransactionRouter } from "./routers/cashier/transaction";
+import { cashierAccountRouter } from "./routers/cashier/account";
+import { globalRouter } from "./routers/global";
 
 /**
  * This is the primary router for your server.
@@ -27,7 +29,9 @@ export const appRouter = createTRPCRouter({
   user_cashier : {
     order : cashierOrderRouter,
     transaction : cashierTransactionRouter,
-  }
+    account : cashierAccountRouter
+  },
+  global : globalRouter
 });
 
 // export type definition of API
