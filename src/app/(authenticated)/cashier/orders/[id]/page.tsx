@@ -134,7 +134,7 @@ const Page = () => {
           </>
         }
       </CardContent>
-      {
+      {/* {
         transaction.status === "PENDING" && 
         <AssignRider 
         riderIsLoading={riderIsLoading} 
@@ -157,7 +157,7 @@ const Page = () => {
         riderIsLoading={riderIsLoading} 
         refetchTransaction={refetchTransaction}
         />
-      }
+      } */}
     </Card> );
   } else {
     return <></>

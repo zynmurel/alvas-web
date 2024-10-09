@@ -45,18 +45,26 @@ const CreateCategory = ({category_id, closeDialog, category_name, refetchCategor
       refetchCategory()
     },
     onError: (e) => {
+      if(e.message.includes("Unique constraint failed on the fields")){
+        toast({
+          variant: "destructive",
+          title: "Creating category failed",
+          description: "Category with this name already exist."
+        })
+    } else {
       toast({
         variant: "destructive",
         title: "Creating category failed",
         description: e.message
       })
     }
+    }
   })
 
   const onSubmitCategory = async (data: z.infer<typeof CreateCategorySchema>) => {
       if (user?.id) {
         return mutateAsync({
-          category_name: data.category_name,
+          category_name: data.category_name.toUpperCase(),
           id:category_id || 0
         })
       } else {

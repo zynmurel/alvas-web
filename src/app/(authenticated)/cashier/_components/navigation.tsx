@@ -1,18 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 import Link from "next/link"
-import { CircleUser, LayoutList, Menu, Package2, Salad } from "lucide-react"
+import { CircleUser, LayoutList, Menu, Package, Package2, Salad } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { usePathname } from "next/navigation"
 
 const paths = [
-    {
-        title : "Orders",
-        path : '/cashier',
-        icon : <Salad className="w-4 h-4" />
-    },
+  {
+      title : "Orders",
+      path : '/cashier',
+      icon : <Salad className="w-4 h-4" />
+  },
+  {
+      title : "Delivery",
+      path : '/cashier/orders',
+      icon : <Package className="w-4 h-4" />
+  },
     {
         title : "Transactions",
         path : '/cashier/transactions',

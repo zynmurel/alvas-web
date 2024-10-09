@@ -3,17 +3,8 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 
 export const productRouter = createTRPCRouter({
-    getAllProducts: publicProcedure.input(z.object({
-        status :z.enum(["AVAILABLE", "NOT_AVAILABLE", "ALL"]),
-        category_id : z.number().optional()
-    })).query(({ input, ctx }) => {
-        const whereStatus = input.status === "ALL" ? {} : {status:input.status}
-        const whereCategorty = !input.category_id ? {} : {category_id:input.category_id}
+    getAllProducts: publicProcedure.query(({ ctx }) => {
         return ctx.db.products.findMany({
-            where : {
-                ...whereStatus,
-                ...whereCategorty,
-            },
             include:{
                 category:true,
                 orders:true,
@@ -38,15 +29,16 @@ export const productRouter = createTRPCRouter({
             }
         })
     }),
-    archiveProduct : publicProcedure.input(z.object({
-        id:z.number()
+    toggleArchiveProduct : publicProcedure.input(z.object({
+        id:z.number(),
+        status :z.enum(["AVAILABLE", "NOT_AVAILABLE"])
     })).mutation(({ctx, input})=>{
         return ctx.db.products.update({
             where:{
                 id:input.id
             },
             data:{
-                status :"NOT_AVAILABLE"
+                status :input.status
             }
         })
     }),

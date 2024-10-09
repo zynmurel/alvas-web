@@ -35,7 +35,7 @@ export type TransactionType = {
     customer_id: number | null;
     delivery_fee: number | null;
     delivery_rider_id: number | null;
-    status : "DONE" | "CANCELLED" | "ONGOING" | "PENDING";
+    status : "DONE" | "CANCELLED" | "ONGOING" | "PENDING" |"DELIVERED";
     total_amount : number;
     createdAt: Date;
     updatedAt: Date;

@@ -5,12 +5,12 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 export const transactionRouter = createTRPCRouter({
   getAdminOrders: publicProcedure
   .input(z.object({
-    status : z.enum(["PENDING","ONGOING","DONE","CANCELLED"])
+    admin_id : z.number()
   }))
-    .query(({ ctx, input : { status } }) => {
+    .query(({ ctx, input : {admin_id}}) => {
       return ctx.db.transaction.findMany({
         where :{
-            status,
+          admin_id,
             transaction_type : "DELIVERY"
         },
         include : {
@@ -23,6 +23,7 @@ export const transactionRouter = createTRPCRouter({
             customer_name : `${transaction.customer?.first_name} ${transaction.customer?.middle_name[0]}. ${transaction.customer?.last_name}`,
             customer_contact : transaction.customer?.contact_number,
             sub_total: transaction.total_amount,
+            status: transaction.status,
             delivery_fee: transaction.delivery_fee || 0,
             total_amount : (transaction.delivery_fee || 0) + transaction.total_amount
         }))
@@ -108,6 +109,22 @@ export const transactionRouter = createTRPCRouter({
         },
         data : {
           status : "CANCELLED"
+        }
+      })
+    }),
+    doneTransaction :publicProcedure
+    .input(z.object({
+      transaction_id:z.number(),
+    }))
+    .mutation(({ ctx, input:{
+      transaction_id,
+    } })=>{
+      return ctx.db.transaction.update({
+        where : {
+          id:transaction_id
+        },
+        data : {
+          status : "DONE"
         }
       })
     }),

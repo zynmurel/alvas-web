@@ -66,7 +66,7 @@ model products {
 
 model product_category {
     id            Int        @id @default(autoincrement())
-    category_name String
+    category_name String    @unique
     createdAt     DateTime   @default(now())
     updatedAt     DateTime   @updatedAt
     products      products[]
@@ -176,6 +176,7 @@ enum transaction_type {
 enum transaction_status {
     PENDING
     ONGOING
+    DELIVERED
     DONE
     CANCELLED
 }

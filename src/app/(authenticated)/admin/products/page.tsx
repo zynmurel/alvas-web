@@ -44,7 +44,8 @@ import { useEffect, useState } from "react"
 import { formatCurrency } from "@/app/helper/format"
 import { type PaginationType } from "@/lib/types/pagination"
 import { DataPagination } from "../category/_components/table-components/pagination"
-type StatusType ="ALL" | "AVAILABLE" | "NOT_AVAILABLE"
+import { orders, product_category, products } from "@prisma/client"
+type StatusType = "AVAILABLE" | "NOT_AVAILABLE"
 type CategoryType = undefined | number
 const ProductsPage = () => {
   const router = useRouter()
@@ -54,8 +55,12 @@ const ProductsPage = () => {
     take:8,
     skip:0
   })
+  const [products, setProducts] = useState<(products & {
+    category : product_category;
+    orders : orders[]
+  })[]>([])
 
-  const { data:products, isLoading:productsIsLoading, refetch} = api.product.getAllProducts.useQuery({ status, category_id:category })
+  const { data, isLoading:productsIsLoading, refetch} = api.product.getAllProducts.useQuery()
 
   const { data:categories, isLoading:categoriesLoading} = api.category.getCategories.useQuery()
 
@@ -63,21 +68,29 @@ const ProductsPage = () => {
     onSuccess:()=>refetch()
   })
 
-  const { mutateAsync: archiveProduct, isPending:archiveProductPending } = api.product.archiveProduct.useMutation({
+  const { mutateAsync: archiveProduct, isPending:archiveProductPending } = api.product.toggleArchiveProduct.useMutation({
     onSuccess:()=>refetch()
   })
   
   const onClickAddProduct = (path:string | number) => ()=>router.push("products/create-product/"+path)
 
-  const onArchiveProduct = (id:number) => ()=>archiveProduct({id})
+  const onArchiveProduct = (id:number, status:StatusType) => ()=>archiveProduct({id, status})
 
   useEffect(()=>{ 
     void refetch()
    },[refetch])
 
-  // useEffect(()=>{
-  //   (async()=>await getProducts())
-  // },[getProducts, status, category])
+  useEffect(()=>{
+    if(data){
+      setProducts(data.filter(prod=>{
+        if(category){
+          return prod.status === status && prod.category_id === category
+        }else {
+        return prod.status === status
+        }
+      }))
+    }
+  },[data, status, category])
     return ( 
         <div className=" flex flex-col">
           <div className="mx-auto grid w-full max-w-7xl gap-2">
@@ -190,14 +203,21 @@ const ProductsPage = () => {
                                       <Button onClick={onClickAddProduct(prod.id)} size={"sm"} variant={"outline"} className=" w-full">
                                         Edit
                                       </Button>
-                                      <Button
+                                      {status==="AVAILABLE"?<Button
                                       disabled={archiveProductPending}
-                                      onClick={onArchiveProduct(prod.id)}
+                                      onClick={onArchiveProduct(prod.id, "NOT_AVAILABLE")}
                                       size={"sm"}
                                       variant={"outline"}
                                       className=" mt-1 w-full border-orange-500 text-orange-500">
                                         Archive
-                                      </Button>
+                                      </Button>:<Button
+                                      disabled={archiveProductPending}
+                                      onClick={onArchiveProduct(prod.id, "AVAILABLE")}
+                                      size={"sm"}
+                                      variant={"outline"}
+                                      className=" mt-1 w-full border-orange-500 text-orange-500">
+                                        Unarchive
+                                      </Button>}
                                       {!prod.orders.length && <Button 
                                       disabled={isPending} 
                                       onClick={()=>deleteProduct({id:Number(prod.id)})} 

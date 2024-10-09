@@ -19,7 +19,7 @@ type StatusType ="PENDING" | "ONGOING" | "DONE" | "CANCELLED"
 const OrderPage = ({
   children,
 }: Readonly<{ children: React.ReactElement }>) => {
-  const [status, setStatus] = useState<StatusType>("PENDING")
+  const [status, setStatus] = useState<StatusType>("ONGOING")
   const {user} = useStore()
   const [transactions, setTransactions] = useState<{
     id: number;
@@ -53,24 +53,13 @@ const OrderPage = ({
         <h1 className="text-3xl font-semibold">Delivery Orders</h1>
         <main className="grid flex-1 gap-4 p-4 sm:px-6 sm:py-0 md:gap-4 lg:grid-cols-3 xl:grid-cols-3 min-h-[400px] px-6 py-2 space-y-5 lg:px-10 lg:container">
           <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
-            <Tabs defaultValue="PENDING" onValueChange={(e)=>setStatus(e as StatusType)}>
+            <Tabs defaultValue="ONGOING" value={status}  onValueChange={(e)=>setStatus(e as StatusType)}>
               <div className="flex items-center">
-                <TabsList className="grid grid-cols-5 w-[400px]">
-                  <TabsTrigger value="PENDING">Pending</TabsTrigger>
+                <TabsList className="grid grid-cols-2 w-[400px]">
                   <TabsTrigger value="ONGOING">Ongoing</TabsTrigger>
                   <TabsTrigger value="DELIVERED">Delivered</TabsTrigger>
-                  <TabsTrigger value="DONE">Done</TabsTrigger>
-                  <TabsTrigger value="CANCELLED">Cancelled</TabsTrigger>
                 </TabsList>
               </div>
-              <TabsContent value="PENDING">
-                <OrdersContent 
-                status={"PENDING"} 
-                transactions={transactions}
-                transactionsIsLoading={transactionsIsLoading}
-                transactionsIsRefetching={transactionsIsRefetching}
-                />
-              </TabsContent>
               <TabsContent value="ONGOING">
                 <OrdersContent status={"ONGOING"} 
                 transactions={transactions}
@@ -80,20 +69,6 @@ const OrderPage = ({
               </TabsContent>
               <TabsContent value="DELIVERED">
                 <OrdersContent status={"DELIVERED"} 
-                transactions={transactions}
-                transactionsIsLoading={transactionsIsLoading}
-                transactionsIsRefetching={transactionsIsRefetching}
-                />
-              </TabsContent>
-              <TabsContent value="DONE">
-                <OrdersContent status={"DONE"} 
-                transactions={transactions}
-                transactionsIsLoading={transactionsIsLoading}
-                transactionsIsRefetching={transactionsIsRefetching}
-                />
-              </TabsContent>
-              <TabsContent value="CANCELLED">
-                <OrdersContent status={"CANCELLED"} 
                 transactions={transactions}
                 transactionsIsLoading={transactionsIsLoading}
                 transactionsIsRefetching={transactionsIsRefetching}
