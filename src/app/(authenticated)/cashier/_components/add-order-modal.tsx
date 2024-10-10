@@ -16,9 +16,8 @@ export function AddOrderModal({ open, setOpen, setSelectedProducts }: {
     setOpen: (open: ProductType | undefined) => void;
     setSelectedProducts: Dispatch<SetStateAction<ProductType[]>>
 }) {
-    const [quantity, setQuantity] = useState(open?.quantity||1)
+    const [quantity, setQuantity] = useState(1)
     if (!open) return <></>
-
     const setOpenChange = (open: boolean) => {
         if (!open) {
             setOpen(undefined)
