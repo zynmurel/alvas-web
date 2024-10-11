@@ -11,6 +11,9 @@ import { cashierOrderRouter } from "./routers/cashier/orders";
 import { cashierTransactionRouter } from "./routers/cashier/transaction";
 import { cashierAccountRouter } from "./routers/cashier/account";
 import { globalRouter } from "./routers/global";
+import { customerOrderRouter } from "./routers/customer/orders";
+import { customerSettingsRouter } from "./routers/customer/settings";
+import { customerTransactionRouter } from "./routers/customer/transaction";
 
 /**
  * This is the primary router for your server.
@@ -30,6 +33,11 @@ export const appRouter = createTRPCRouter({
     order : cashierOrderRouter,
     transaction : cashierTransactionRouter,
     account : cashierAccountRouter
+  },
+  user_customer : {
+    order : customerOrderRouter,
+    settings : customerSettingsRouter,
+    transaction :customerTransactionRouter
   },
   global : globalRouter
 });

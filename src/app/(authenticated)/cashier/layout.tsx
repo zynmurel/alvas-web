@@ -9,9 +9,9 @@ export default function Dashboard({
     children,
   }: Readonly<{ children: React.ReactNode }>) {
     const session = getSession()
-    if(session?.role!=="cashier") {
-      redirect(`/${session?.role}`)
-    }
+    // if(session?.role!=="cashier") {
+    //   redirect(`/${session?.role}`)
+    // }
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 flex h-16 z-20 items-center gap-4 border-b bg-background px-4 md:px-6 justify-between">

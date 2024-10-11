@@ -26,6 +26,7 @@ const OrderPage = ({
     customer_name: string;
     customer_contact: string | undefined;
     sub_total: number;
+    createdAt: Date;
     delivery_fee: number;
     total_amount: number;
     status: $Enums.transaction_status

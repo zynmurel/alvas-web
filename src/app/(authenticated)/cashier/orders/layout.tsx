@@ -25,6 +25,7 @@ const OrderPage = ({
     id: number;
     customer_name: string;
     customer_contact: string | undefined;
+    createdAt: Date;
     sub_total: number;
     delivery_fee: number;
     total_amount: number;

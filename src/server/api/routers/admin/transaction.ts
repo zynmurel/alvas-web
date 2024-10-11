@@ -16,6 +16,9 @@ export const transactionRouter = createTRPCRouter({
         include : {
             orders:true,
             customer:true
+        },
+        orderBy : {
+          createdAt:"desc"
         }
       }).then((transactions)=>(
         transactions.map((transaction)=>({
@@ -23,6 +26,7 @@ export const transactionRouter = createTRPCRouter({
             customer_name : `${transaction.customer?.first_name} ${transaction.customer?.middle_name[0]}. ${transaction.customer?.last_name}`,
             customer_contact : transaction.customer?.contact_number,
             sub_total: transaction.total_amount,
+            createdAt: transaction.createdAt,
             status: transaction.status,
             delivery_fee: transaction.delivery_fee || 0,
             total_amount : (transaction.delivery_fee || 0) + transaction.total_amount

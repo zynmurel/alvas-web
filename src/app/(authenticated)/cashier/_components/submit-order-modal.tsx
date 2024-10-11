@@ -13,11 +13,13 @@ import { api } from "@/trpc/react";
 import Loading from "./loading";
 import { toast } from "@/components/ui/use-toast";
 import { useStore } from "@/lib/store/app";
+import { Dispatch, SetStateAction } from "react";
 
-export function SubmitOrderModal({ open, setOpen, products }: {
+export function SubmitOrderModal({ open, setOpen, products, setProducts }: {
     open: boolean;
     setOpen: (open: boolean) => void;
     products: ProductType[]
+    setProducts:Dispatch<SetStateAction<ProductType[]>>
 }) {
     const { user } = useStore()
 
@@ -28,6 +30,7 @@ export function SubmitOrderModal({ open, setOpen, products }: {
             description: "Order Confirmed"
           })
           setOpen(false)
+          setProducts([])
         },
         onError: (e) => {
           toast({

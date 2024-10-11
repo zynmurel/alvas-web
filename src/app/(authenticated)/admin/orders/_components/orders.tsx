@@ -22,6 +22,7 @@ import { type PaginationType } from "@/lib/types/pagination"
 import { formatCurrency } from "@/app/_utils/format"
 import { useParams, useRouter } from "next/navigation"
 import { type $Enums } from "@prisma/client"
+import { format } from "date-fns"
 const OrdersContent = ({
   status,
   transactions,
@@ -33,6 +34,7 @@ const OrdersContent = ({
     customer_name?: string;
     customer_contact?: string;
     sub_total: number;
+    createdAt: Date;
     delivery_fee: number;
     total_amount: number;
 }[] | undefined;
@@ -57,7 +59,8 @@ transactionsIsRefetching : boolean
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Customer</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Date</TableHead>
                 <TableHead className="text-center">Sub Total</TableHead>
                 <TableHead className="text-center">Total Amount</TableHead>
               </TableRow>
@@ -75,6 +78,9 @@ transactionsIsRefetching : boolean
                     <div className="hidden text-sm text-muted-foreground md:inline">
                       {transaction.customer_contact}
                     </div>
+                  </TableCell>
+                  <TableCell >
+                    {format(transaction.createdAt, "PP - hh:mm aa")}
                   </TableCell>
                   <TableCell className="text-center">
                     {formatCurrency(transaction.sub_total)}

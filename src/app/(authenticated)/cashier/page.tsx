@@ -83,7 +83,7 @@ const Page = () => {
         <div className=" flex flex-col">
             <div className="mx-auto grid w-full max-w-9xl gap-2">
                 <AddOrderModal open={selectedProduct} setOpen={setSelectedProduct} setSelectedProducts={setSelectedProducts}/>
-                <SubmitOrderModal open={submitOrderOpen} setOpen={setSubmitOrderOpen} products={selectedProducts}/>
+                <SubmitOrderModal open={submitOrderOpen} setOpen={setSubmitOrderOpen} products={selectedProducts} setProducts={setSelectedProducts}/>
                 <h1 className="text-3xl font-semibold">Process Orders</h1>
                 <p className="text-muted-foreground -mt-2 mb-2">Select products and fulfill customer orders.</p>
                 <main className="flex flex-1 flex-col gap-4 md:gap-8">
