@@ -14,6 +14,7 @@ import { globalRouter } from "./routers/global";
 import { customerOrderRouter } from "./routers/customer/orders";
 import { customerSettingsRouter } from "./routers/customer/settings";
 import { customerTransactionRouter } from "./routers/customer/transaction";
+import { customerAccountRouter } from "./routers/customer/account";
 
 /**
  * This is the primary router for your server.
@@ -37,7 +38,8 @@ export const appRouter = createTRPCRouter({
   user_customer : {
     order : customerOrderRouter,
     settings : customerSettingsRouter,
-    transaction :customerTransactionRouter
+    transaction :customerTransactionRouter,
+    account : customerAccountRouter
   },
   global : globalRouter
 });

@@ -53,7 +53,7 @@ export function AddOrderModal({ open, setOpen, setSelectedProducts }: {
                 <DialogHeader>
                     <DialogTitle>Selected Product</DialogTitle>
                     <DialogDescription>
-                        Add this product to your order.
+                        Add this product to your basket.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="flex flex-row gap-4 py-4">

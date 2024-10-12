@@ -32,7 +32,8 @@ export const customerTransactionRouter = createTRPCRouter({
     .mutation(async ({ ctx, input: { transaction_id } }) => {
       return ctx.db.transaction.update({
         where : {
-          id:transaction_id
+          id:transaction_id,
+          status:"PENDING"
         },
         data :{
           status:"CANCELLED"

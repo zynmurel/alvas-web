@@ -113,7 +113,7 @@ export function ViewTransactionModal({ open, setOpen, settings, status }: {
                                     <p className=" font-semibold">{formatCurrency(totalAmount + (settings?.delivery_fee || 0))}</p>
                                 </div>
                                 <Separator className=" my-2" />
-                                <div className="grid gap-1 p-2 bg-slate-100 rounded border">
+                                {open.status==="ONGOING" &&<div className="grid gap-1 p-2 bg-slate-100 rounded border">
                                     <div className="font-bold">RIDER INFORMATION</div>
                                     <dl className="grid gap-1">
                                         <div className="flex items-center justify-between">
@@ -127,7 +127,7 @@ export function ViewTransactionModal({ open, setOpen, settings, status }: {
                                             </dd>
                                         </div>
                                     </dl>
-                                </div>
+                                </div>}
                                 <div className=" flex flex-row justify-end gap-2 w-full mt-5">
                                     <Button onClick={() => setOpen(undefined)} variant={"outline"}>Close</Button>
                                     {open.status === "PENDING" && <Button disabled={isPending} onClick={() => onCancel(open?.id)} variant={"destructive"} className="">Cancel Order</Button>}
