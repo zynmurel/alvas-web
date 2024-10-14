@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { db } from '@/server/db';
-import { createSessionToken } from '@/lib/session';
 
 export async function POST(req: NextRequest) {
     const data = await req.json().then((data) => {

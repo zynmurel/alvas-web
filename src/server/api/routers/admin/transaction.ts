@@ -86,17 +86,19 @@ export const transactionRouter = createTRPCRouter({
       transaction_id:z.number(),
       rider_id:z.number(),
     }))
-    .mutation(({ ctx, input:{
+    .mutation(async({ ctx, input:{
       transaction_id,
       rider_id
     } })=>{
+      const settings = await ctx.db.settings.findFirst()
       return ctx.db.transaction.update({
         where : {
           id:transaction_id
         },
         data : {
           delivery_rider_id : rider_id,
-          status : "ONGOING"
+          status : "ONGOING",
+          delivery_fee :settings?.delivery_fee || 0
         }
       })
     }),

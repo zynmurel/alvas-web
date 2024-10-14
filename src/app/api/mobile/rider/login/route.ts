@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     console.log("sean", username, password)
 
     try {
-        const user = await db.customer.findUnique({
+        const user = await db.delivery_rider.findUnique({
             where: { username },
         });
 
@@ -24,15 +24,13 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "wrong_password", error: 'Invalid credentials', status: 401 }, { status: 200 });
         }
         const response = NextResponse.json({ status: 200, user : { 
-            role: "customer", 
+            role: "rider", 
             user_id: user.id ,
             username: user.username, 
             first_name : user.first_name,
             middle_name : user.middle_name,
             last_name : user.last_name,
             contact_number : user.contact_number,
-            address : user.address,
-            place_description : user.place_description,
         } }, { status: 200 });
         return response
 

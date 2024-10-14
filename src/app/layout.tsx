@@ -18,14 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
           <TRPCReactProvider>{children}</TRPCReactProvider>
-        </ThemeProvider>
       </body>
     </html>
   );

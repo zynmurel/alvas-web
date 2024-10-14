@@ -1,4 +1,5 @@
 import { ModeToggle } from "@/app/_components/theme-mode";
+import { ThemeProvider } from "@/app/_components/theme-provider";
 import "@/styles/globals.css";
 import { type Metadata } from "next";
 
@@ -13,14 +14,22 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className=" w-full flex flex-row h-screen  bg-[url('/bg.jpg')] bg-cover relative">
-      <div className=" absolute top-5 left-5">
 
-      <ModeToggle/>
-      </div>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <div className=" w-full flex flex-row h-screen  bg-[url('/bg.jpg')] bg-cover relative">
+        <div className=" absolute top-5 left-5">
+
+          <ModeToggle />
+        </div>
         {/* <div className=" hidden md:flex flex-1">
         </div> */}
         {children}
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }
