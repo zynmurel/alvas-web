@@ -78,7 +78,7 @@ const Page = () => {
             <div className="flex flex-1 flex-col gap-4 md:gap-8">
                 <Card x-chunk="dashboard-01-chunk-0" className=" bg-transparent border-none shadow-none">
                     <div className=" flex flex-row justify-between items-end p-0 z-50 bg-white mt-2">
-                        <Select
+                        {/* <Select
                             onValueChange={setCategory}
                             value={category}
                             disabled={productsIsLoading}
@@ -91,7 +91,8 @@ const Page = () => {
                                     [{ category: "ALL" }, ...(products || [])]?.map((prod) => (<SelectItem value={prod.category} key={prod.category} className=" capitalize text-xs">{prod.category}</SelectItem>))
                                 }
                             </SelectContent>
-                        </Select>
+                        </Select> */}
+                        <div></div>
                         <div  onClick={()=>setSubmitOrderOpen(true)} className=" flex flex-row gap-1 items-center px-3 border-green-900 text-green-900 text-sm font-bold border rounded-full py-1 relative">
                             {selectedProducts.length ? <div className=" absolute -top-2 -left-3 text-xs flex items-center justify-center bg-green-800 text-white border aspect-square px-2 rounded-full">{selectedProducts.length}</div>:<></>}
                             <ShoppingBasket size={18} strokeWidth={2.5} />
