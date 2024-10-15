@@ -91,16 +91,20 @@ export const transactionRouter = createTRPCRouter({
       rider_id
     } })=>{
       const settings = await ctx.db.settings.findFirst()
-      return ctx.db.transaction.update({
-        where : {
-          id:transaction_id
-        },
-        data : {
-          delivery_rider_id : rider_id,
-          status : "ONGOING",
-          delivery_fee :settings?.delivery_fee || 0
-        }
-      })
+      if(settings){
+        return ctx.db.transaction.update({
+          where : {
+            id:transaction_id
+          },
+          data : {
+            delivery_rider_id : rider_id,
+            status : "ONGOING",
+            delivery_fee :settings?.delivery_fee || 0
+          }
+        })
+      } else {
+        return null
+      }
     }),
     cancelTransaction :publicProcedure
     .input(z.object({

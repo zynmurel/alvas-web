@@ -24,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Edit } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
+import { Eye, EyeOff } from 'lucide-react';
 
 const UpdateCustomerSchema = z.object({
     first_name: z.string(),
@@ -54,6 +55,9 @@ export type TransactionType = (transaction & {
 const Page = () => {
     const { id } = useParams()
     const [isEditPersonalDetails, setIsEditPersonalDetails] = useState(false)
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false)
+    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false)
     const [isEditUsernameDetails, setIsEditUsernameDetails] = useState(false)
     const [isEditPasswordDetails, setIsEditPasswordDetails] = useState(false)
     const { data: account, isLoading: accountIsLoading, refetch } = api.user_customer.account.getAccountDetails.useQuery({
@@ -416,7 +420,26 @@ const Page = () => {
                                                     <FormItem className=" relative">
                                                         <FormLabel className="">Current Password</FormLabel>
                                                         <FormControl>
-                                                            <Input type="password" {...field} placeholder="Input password" className=" text-xs" style={{ marginTop: 0 }} />
+                                                            <div className="relative">
+                                                                <Input
+                                                                    type={isPasswordVisible ? "text" : "password"} // Toggle password visibility
+                                                                    {...field}
+                                                                    placeholder="Input current password"
+                                                                    className="text-xs"
+                                                                    style={{ marginTop: 0 }}
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                                                                    className="absolute right-3 top-2" // Positioning the icon inside the input field
+                                                                >
+                                                                    {isPasswordVisible ? (
+                                                                        <EyeOff className="w-4 h-4 text-gray-500" />
+                                                                    ) : (
+                                                                        <Eye className="w-4 h-4 text-gray-500" />
+                                                                    )}
+                                                                </button>
+                                                            </div>
                                                         </FormControl>
                                                         <FormMessage className=" absolute -bottom-5" />
                                                     </FormItem>
@@ -431,7 +454,26 @@ const Page = () => {
                                                     <FormItem className=" relative">
                                                         <FormLabel className="">New Password</FormLabel>
                                                         <FormControl>
-                                                            <Input type="password" {...field} placeholder="Input password" className=" text-xs" style={{ marginTop: 0 }} />
+                                                            <div className="relative">
+                                                                <Input
+                                                                    type={isNewPasswordVisible ? "text" : "password"}
+                                                                    {...field}
+                                                                    placeholder="Input new password"
+                                                                    className="text-xs"
+                                                                    style={{ marginTop: 0 }}
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
+                                                                    className="absolute right-3 top-2"
+                                                                >
+                                                                    {isNewPasswordVisible ? (
+                                                                        <EyeOff className="w-4 h-4 text-gray-500" />
+                                                                    ) : (
+                                                                        <Eye className="w-4 h-4 text-gray-500" />
+                                                                    )}
+                                                                </button>
+                                                            </div>
                                                         </FormControl>
                                                         <FormMessage className=" absolute -bottom-5" />
                                                     </FormItem>
@@ -446,7 +488,26 @@ const Page = () => {
                                                     <FormItem className=" relative">
                                                         <FormLabel className="">Confirm Password</FormLabel>
                                                         <FormControl>
-                                                            <Input type="password" {...field} placeholder="Input password" className=" text-xs" style={{ marginTop: 0 }} />
+                                                            <div className="relative">
+                                                                <Input
+                                                                    type={isConfirmPasswordVisible ? "text" : "password"} 
+                                                                    {...field}
+                                                                    placeholder="Input new password"
+                                                                    className="text-xs"
+                                                                    style={{ marginTop: 0 }}
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
+                                                                    className="absolute right-3 top-2"
+                                                                >
+                                                                    {isConfirmPasswordVisible ? (
+                                                                        <EyeOff className="w-4 h-4 text-gray-500" />
+                                                                    ) : (
+                                                                        <Eye className="w-4 h-4 text-gray-500" />
+                                                                    )}
+                                                                </button>
+                                                            </div>
                                                         </FormControl>
                                                         <FormMessage className=" absolute -bottom-5" />
                                                     </FormItem>
