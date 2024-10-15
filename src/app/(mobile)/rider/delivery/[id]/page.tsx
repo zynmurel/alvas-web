@@ -6,7 +6,7 @@ import {
 import { api } from "@/trpc/react"
 import { useState } from "react"
 import { useParams } from "next/navigation"
-import { type delivery_rider, type orders, type products, type transaction } from "@prisma/client"
+import { type customer, type orders, type products, type transaction } from "@prisma/client"
 import { RefreshCcw, TableProperties, Truck } from "lucide-react"
 import ForDelivery from "./_components/delivery"
 import Delivered from "./_components/delivered"
@@ -26,12 +26,13 @@ const menu = [{
 
 export type TransactionType = (transaction & {
     orders: (orders & { product: products })[],
-    rider: delivery_rider | null
+    customer: customer | null
 })
 
 const Page = () => {
     const {id} = useParams()
     const [status, setStatus] = useState<MenuType>("ONGOING")
+
     api.user_customer.settings.getSettings.useQuery()
     const {refetch:refetchForDelivery, isRefetching:isLoadingForDelivery } = api.user_rider.delivery.getTransactionsForDelivery.useQuery({
         id:Number(id),
@@ -68,7 +69,7 @@ const Page = () => {
                             })
                         }
                     </div>
-                    <div onClick={refetch} className={`text-sm flex justify-center items-center flex-row font-semibold rounded flex-none p-1 text-slate-300 bg-slate-200 `}><RefreshCcw className={`${isLoadingDelivered || isLoadingForDelivery && "animate-spin"}`} strokeWidth={3} size={18}/></div>
+                    <div onClick={refetch} className={`text-sm flex justify-center items-center flex-row font-semibold rounded flex-none p-1 text-slate-500 bg-slate-200 `}><RefreshCcw className={`${isLoadingDelivered || isLoadingForDelivery && "animate-spin"}`} strokeWidth={3} size={18}/></div>
                 </Card>
                     {
                         status === "ONGOING" ? <ForDelivery /> : <Delivered />

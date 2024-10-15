@@ -9,15 +9,16 @@ import {
 } from "@/components/ui/dialog"
 import { formatCurrency } from "@/app/_utils/format";
 import { type Dispatch, type SetStateAction } from "react";
-import {type TransactionType } from "../page";
+import { type TransactionType } from "../page";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/trpc/react";
-import { BadgeStatus } from "../../../basket/_components/badger";
+import { BadgeStatus } from "./badger"
 import { useParams } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 
 export function ViewTransactionModal({ open, setOpen }: {
     open: TransactionType | undefined;
+    status: "DONE"| "CANCELLED";
     setOpen: (open: TransactionType | undefined) => void;
     setSelectedTransaction: Dispatch<SetStateAction<TransactionType | undefined>>
 }) {

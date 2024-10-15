@@ -49,4 +49,34 @@ export const riderDeliveryRouter = createTRPCRouter({
             }
         })
     }),
+    cancelTransaction: publicProcedure
+      .input(z.object({
+        transaction_id: z.number()
+      }))
+      .mutation(async ({ ctx, input: { transaction_id } }) => {
+        return ctx.db.transaction.update({
+          where : {
+            id:transaction_id,
+            status:"ONGOING"
+          },
+          data :{
+            status:"CANCELLED"
+          }
+        })
+      }),
+      transactionDelivered: publicProcedure
+        .input(z.object({
+          transaction_id: z.number()
+        }))
+        .mutation(async ({ ctx, input: { transaction_id } }) => {
+          return ctx.db.transaction.update({
+            where : {
+              id:transaction_id,
+              status:"ONGOING"
+            },
+            data :{
+              status:"DELIVERED"
+            }
+          })
+        }),
 });

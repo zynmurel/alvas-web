@@ -67,7 +67,7 @@ transactionsIsRefetching : boolean
             </TableHeader>
             <TableBody>
               {
-                transactions?.map((transaction)=>(
+                transactions?.slice(pagination.skip, pagination.skip+pagination.take).map((transaction)=>(
                 <TableRow 
                 key={transaction.id} 
                 onClick={()=>router.push("/admin/orders/"+transaction.id)}

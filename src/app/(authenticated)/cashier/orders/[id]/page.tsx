@@ -16,9 +16,6 @@ import OrderNotFound from "./_components/not-found"
 import { formatCurrency } from "@/app/helper/format"
 import { Badge } from "@/components/ui/badge"
 import { type $Enums } from "@prisma/client"
-import AssignRider from "./_components/assign-rider"
-import CancelOrder from "./_components/cancel-order"
-import MarkDoneOrder from "./_components/mark-done-order"
 
 const BadgeStatus = ({status}:{status : $Enums.transaction_status}) => {
   if(status==="PENDING"){
@@ -36,17 +33,13 @@ const BadgeStatus = ({status}:{status : $Enums.transaction_status}) => {
 
 const Page = () => {
   const { id } = useParams()
-  const [searchRider, setSearchRider] = React.useState("")
   
-  const { data:transaction, isLoading: transactionIsLoading, isRefetching, refetch:refetchTransaction } = api.transaction.getAdminOrder.useQuery({
+  const { data:transaction, isLoading: transactionIsLoading, isRefetching } = api.transaction.getAdminOrder.useQuery({
     id : Number(id)
   },{
     enabled : typeof Number(id) === "number"
   })
 
-  const { data:riders, isLoading:riderIsLoading } = api.rider.getRiderForSelect.useQuery({
-      name_text : searchRider
-  })
   if(!transaction && !transactionIsLoading){
     return <OrderNotFound/>
   }

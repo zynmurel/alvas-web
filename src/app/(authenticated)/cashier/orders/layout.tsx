@@ -10,7 +10,7 @@ import { api } from "@/trpc/react"
 import React, { useEffect, useState } from "react"
 import { TransactionContext } from "./context/transaction"
 import { useStore } from "@/lib/store/app"
-import { $Enums } from "@prisma/client"
+import { type $Enums } from "@prisma/client"
 
 type StatusType ="PENDING" | "ONGOING" | "DONE" | "CANCELLED"
 

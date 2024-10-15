@@ -13,7 +13,7 @@ import { api } from "@/trpc/react";
 import Loading from "./loading";
 import { toast } from "@/components/ui/use-toast";
 import { useStore } from "@/lib/store/app";
-import { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 
 export function SubmitOrderModal({ open, setOpen, products, setProducts }: {
     open: boolean;

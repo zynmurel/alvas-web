@@ -44,7 +44,7 @@ import { useEffect, useState } from "react"
 import { formatCurrency } from "@/app/helper/format"
 import { type PaginationType } from "@/lib/types/pagination"
 import { DataPagination } from "../category/_components/table-components/pagination"
-import { orders, product_category, products } from "@prisma/client"
+import { type orders, type product_category, type products } from "@prisma/client"
 type StatusType = "AVAILABLE" | "NOT_AVAILABLE"
 type CategoryType = undefined | number
 const ProductsPage = () => {

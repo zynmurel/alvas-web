@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from "react"
+import React from "react"
 import {
     Card,
 } from "@/components/ui/card"
@@ -7,11 +7,10 @@ import { api } from "@/trpc/react"
 import Loading from "../_components/loading"
 import { useState } from "react"
 import { useParams } from "next/navigation"
-import { delivery_rider, orders, products, transaction } from "@prisma/client"
+import { type delivery_rider, type orders, type products, type transaction } from "@prisma/client"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -23,7 +22,7 @@ import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { Check, Edit, X } from "lucide-react"
+import { Edit } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 
 const UpdateCustomerSchema = z.object({

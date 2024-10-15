@@ -12,10 +12,9 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import Loading from "../../_components/loading";
 import { toast } from "@/components/ui/use-toast";
-import { useStore } from "@/lib/store/app";
 import { useParams } from "next/navigation";
 import { Minus } from "lucide-react";
-import { settings } from "@prisma/client";
+import { type settings } from "@prisma/client";
 
 export function SubmitOrderModal({ open, setOpen, products, setProducts, settings }: {
     open: boolean;

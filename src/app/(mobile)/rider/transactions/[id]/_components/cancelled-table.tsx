@@ -10,13 +10,13 @@ import {
 import { format } from "date-fns"
 import { type TransactionType } from "../page"
 import { type Dispatch, type SetStateAction } from "react"
-import { BadgeStatus } from "../../../basket/_components/badger"
-export default function PendingTables({ transactions, setSelectedTransaction}: { 
+import { BadgeStatus } from "./badger"
+export default function CancelledTable({ transactions, setSelectedTransaction }: { 
     transactions: TransactionType[] | null | undefined; 
     setSelectedTransaction: Dispatch<SetStateAction<TransactionType | undefined>> }) {
     return (
         <div>
-            <div className=" font-bold my-2">Pending Transactions</div>
+            <div className=" font-bold my-2">Cancelled Deliveries</div>
             <Table className=" text-sm border">
                 <TableHeader className=" bg-slate-700 rounded-t-xl overflow-hidden text-white">
                     <TableRow>

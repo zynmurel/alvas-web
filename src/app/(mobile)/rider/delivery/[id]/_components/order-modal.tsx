@@ -3,76 +3,114 @@ import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
 import { formatCurrency } from "@/app/_utils/format";
-import { type Dispatch, type SetStateAction } from "react";
-import {type TransactionType } from "../page";
+import { type TransactionType } from "../page";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/trpc/react";
-import { BadgeStatus } from "../../../basket/_components/badger";
+import { BadgeStatus } from "@/app/(mobile)/customer/basket/_components/badger";
 import { useParams } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
+import { Phone, User } from "lucide-react";
+import { ConfirmOrderModal } from "./confirm-modal";
+import { useState } from "react";
+import { CancelOrderModal } from "./cancel-modal";
 
-export function ViewTransactionModal({ open, setOpen }: {
+export default function OrderModal({ open, setOpen }: {
     open: TransactionType | undefined;
     setOpen: (open: TransactionType | undefined) => void;
-    setSelectedTransaction: Dispatch<SetStateAction<TransactionType | undefined>>
 }) {
-    const {id} = useParams()
+    const { id } = useParams()
+    const [openConfirm,setOpenConfirm] = useState(false)
+    const [openCancel,setOpenCancel] = useState(false)
     const setOpenChange = (open: boolean) => {
         if (!open) {
             setOpen(undefined)
         }
     }
-    const {  refetch } = api.user_customer.transaction.getCustomerTransactions.useQuery({
-        customer_id: Number(id),
-    }, {
-        enabled : false
-    })
 
-    const { mutateAsync, isPending } = api.user_customer.transaction.cancelTransaction.useMutation({
-        onSuccess:async()=>{
+    const { mutateAsync:cancelOrder, isPending:cancelOrderIsPending } = api.user_rider.delivery.cancelTransaction.useMutation({
+        onSuccess: async () => {
             toast({
-                title:"Cancelled",
+                title: "Cancelled",
                 description: "Transaction Cancelled"
             })
             setOpen(undefined)
-            await refetch()
+            setOpenCancel(false)
+            await refetchOrders()
         },
-        onError : (e) =>{
-          toast({
-            variant:"destructive",
-            title:"Failed",
-            description:e.message
-          })
+        onError: (e) => {
+            toast({
+                variant: "destructive",
+                title: "Failed",
+                description: e.message
+            })
         }
     })
+
+    const { mutateAsync:orderDelivered, isPending:orderDeliveredIsPending } = api.user_rider.delivery.transactionDelivered.useMutation({
+        onSuccess: async () => {
+            toast({
+                title: "Done",
+                description: "Transaction moved to Delivered"
+            })
+            setOpen(undefined)
+            setOpenConfirm(false)
+            await refetchOrders()
+        },
+        onError: (e) => {
+            toast({
+                variant: "destructive",
+                title: "Failed",
+                description: e.message
+            })
+        }
+    })
+
+    const {refetch:refetchForDelivery } = api.user_rider.delivery.getTransactionsForDelivery.useQuery({
+        id:Number(id),
+    }, {enabled : false})
+    const { refetch:refetchDelivered } = api.user_rider.delivery.getTransactionsDelivered.useQuery({
+        id:Number(id),
+    }, {enabled : false})
+    const refetchOrders =async () => {
+        await refetchForDelivery()
+        await refetchDelivered()
+    }
     if (!open) return <></>
 
     const totalAmount = open.orders.reduce((arr, curr) => {
         return arr + (curr.product.amount * curr.quantity)
     }, 0)
     const orders = open?.orders || []
-    const onCancel = async (id: number | undefined) => {
-        if (id) {
-            await mutateAsync({
-                transaction_id: id
+
+    const onCancel = async () => {
+        if (open.id) {
+            await cancelOrder({
+                transaction_id: open.id
             })
         }
     }
+
+    const onDelivered = async () => {
+        if (open.id) {
+            await orderDelivered({
+                transaction_id: open.id
+            })
+        }
+    }
+
     return (
         <Dialog open={!!open} onOpenChange={setOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Transaction</DialogTitle>
-                    <DialogDescription>
-                        Transaction details and status.
-                    </DialogDescription>
+                    <DialogTitle>{"Customer's Orders"}</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-row gap-4 py-4">
+                <ConfirmOrderModal open={openConfirm} setOpen={setOpenConfirm} isLoading={orderDeliveredIsPending} onSubmit={onDelivered}/>
+                <CancelOrderModal open={openCancel} setOpen={setOpenCancel} isLoading={cancelOrderIsPending} onSubmit={onCancel}/>
                     {
                         !!orders.length && <div className=" text-sm w-full">
                             <div className=" flex flex-row justify-between items-center">
@@ -110,24 +148,28 @@ export function ViewTransactionModal({ open, setOpen }: {
                                     <p className=" font-semibold">{formatCurrency(totalAmount + (open?.delivery_fee || 0))}</p>
                                 </div>
                                 <Separator className=" my-2" />
-                                {open.status==="ONGOING" &&<div className="grid gap-1 p-2 bg-slate-100 rounded border">
-                                    <div className="font-bold">RIDER INFORMATION</div>
+                                {open.status === "ONGOING" && <div className="grid gap-1 p-2 bg-slate-100 rounded border">
+                                    <div className="font-bold">{"Customer's Information"}</div>
                                     <dl className="grid gap-1">
-                                        <div className="flex items-center justify-between">
-                                            <dt>Rider</dt>
-                                            <dd className=" capitalize font-bold">{open.rider?.first_name} {open.rider?.middle_name} {open.rider?.last_name}</dd>
+                                        <div className="flex items-center gap-1">
+                                            <User size={15} strokeWidth={3} />
+                                            <dd className=" capitalize font-bold">{open.customer?.first_name} {open.customer?.middle_name} {open.customer?.last_name}</dd>
                                         </div>
-                                        <div className="flex items-center justify-between">
-                                            <dt>Contact</dt>
+                                        <div className="flex items-center gap-1">
+                                            <Phone size={15} strokeWidth={3} />
                                             <dd className=" font-bold">
-                                                <a href="tel:">{open.rider?.contact_number}</a>
+                                                <a href="tel:">{open.customer?.contact_number}</a>
                                             </dd>
                                         </div>
                                     </dl>
                                 </div>}
                                 <div className=" flex flex-row justify-end gap-2 w-full mt-5">
-                                    <Button onClick={() => setOpen(undefined)} variant={"outline"}>Close</Button>
-                                    {open.status === "PENDING" && <Button disabled={isPending} onClick={() => onCancel(open?.id)} variant={"destructive"} className="">Cancel Order</Button>}
+                                    {open.status !== "ONGOING" &&<Button onClick={() => setOpen(undefined)} variant={"outline"}>Close</Button>}
+                                    {open.status === "ONGOING" &&
+                                        <div className="flex flex-row justify-end gap-2">
+                                            <Button onClick={() => setOpenCancel(true)} variant={"destructive"} className="">Cancel Order</Button>
+                                            <Button onClick={() => setOpenConfirm(true)} className="">Delivered</Button>
+                                        </div>}
                                 </div>
                             </div>
                         </div>

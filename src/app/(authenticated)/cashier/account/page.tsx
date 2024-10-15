@@ -23,8 +23,6 @@ import {
     FormLabel,
     FormMessage,
   } from "@/components/ui/form"
-  import { useToast } from "@/components/ui/use-toast";
-  import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -36,7 +34,6 @@ const CashierDetailsSchema = z.object({
 })
 const Page = () => {
     const { user } = useStore()
-    const router = useRouter()
     const [employeeId, setEmployeeId] = useState({
         id: 0,
         employeeID: ""

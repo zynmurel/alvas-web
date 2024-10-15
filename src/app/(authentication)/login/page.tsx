@@ -5,7 +5,7 @@ import { Mail, Phone } from "lucide-react";
 
 const Page = () => {
   
-    const { data: settings, isPending } = api.global.getSettings.useQuery()
+    const { data: settings } = api.global.getSettings.useQuery()
     return (
         <div className=" grid lg:grid-cols-2 w-full">
             <div className=" flex justify-center items-center"><LoginCard/>

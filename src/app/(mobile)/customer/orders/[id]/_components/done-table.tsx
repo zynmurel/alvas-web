@@ -1,23 +1,18 @@
 import { formatCurrency } from "@/app/_utils/format"
-import { Badge } from "@/components/ui/badge"
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { $Enums, delivery_rider, orders, settings, transaction } from "@prisma/client"
 import { format } from "date-fns"
-import { TransactionType } from "../page"
-import { Dispatch, SetStateAction } from "react"
+import { type TransactionType } from "../page"
+import { type Dispatch, type SetStateAction } from "react"
 import { BadgeStatus } from "../../../basket/_components/badger"
-export default function DoneTable({ transactions, setSelectedTransaction, settings}: { 
+export default function DoneTable({ transactions, setSelectedTransaction}: { 
     transactions: TransactionType[] | null | undefined; 
-    settings: settings | null | undefined
     setSelectedTransaction: Dispatch<SetStateAction<TransactionType | undefined>> }) {
     return (
         <div>
@@ -35,7 +30,7 @@ export default function DoneTable({ transactions, setSelectedTransaction, settin
                         <TableRow onClick={() => setSelectedTransaction(transaction)} key={transaction.id} className=" py-5">
                             <TableCell className="font-medium">{format(transaction.createdAt, "P hh:mm aa")}</TableCell>
                             <TableCell className=" text-xs"><BadgeStatus status={transaction.status} /></TableCell>
-                            <TableCell className="text-right">{formatCurrency(transaction.total_amount + (settings?.delivery_fee||0))}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(transaction.total_amount + (transaction?.delivery_fee||0))}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

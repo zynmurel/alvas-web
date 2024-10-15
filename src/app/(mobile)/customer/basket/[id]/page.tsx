@@ -43,7 +43,7 @@ const Page = () => {
     const [submitOrderOpen, setSubmitOrderOpen] = useState(false)
     const [selectedProduct, setSelectedProduct] = useState<ProductType | undefined>(undefined)
     const { data: products, isLoading: productsIsLoading } = api.user_customer.order.getProducts.useQuery()
-    const { data: settings, isLoading: settingsIsLoading } = api.user_customer.settings.getSettings.useQuery()
+    const { data: settings } = api.user_customer.settings.getSettings.useQuery()
     const productsToShow = () => {
         if (products) {
             const prod = products.map((prods, index) => {
