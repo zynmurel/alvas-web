@@ -26,7 +26,7 @@ const FormSchema = z.object({
     message: "Username must be at least 5 characters.",
   }),
   password: z.string().min(8, {
-    message: "Username must be at least 8 characters.",
+    message: "Password must be at least 8 characters.",
   }),
   role: z.enum(["admin", "cashier"])
 })
