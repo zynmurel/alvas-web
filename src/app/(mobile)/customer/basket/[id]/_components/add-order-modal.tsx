@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { type ProductType } from "../page";
 import { formatCurrency } from "@/app/_utils/format";
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 
 export function AddOrderModal({ open, setOpen, setSelectedProducts }: {
     open: ProductType | undefined;
@@ -17,6 +17,9 @@ export function AddOrderModal({ open, setOpen, setSelectedProducts }: {
     setSelectedProducts: Dispatch<SetStateAction<ProductType[]>>
 }) {
     const [quantity, setQuantity] = useState(1)
+    useEffect(()=>{
+        setQuantity(1)
+    },[open])
     if (!open) return <></>
     const setOpenChange = (open: boolean) => {
         if (!open) {
