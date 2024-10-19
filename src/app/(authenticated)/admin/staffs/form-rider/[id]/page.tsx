@@ -19,15 +19,16 @@ import { api } from "@/trpc/react";
 import { useEffect } from "react";
 import { useStore } from "@/lib/store/app";
 import { toast } from "@/components/ui/use-toast";
+import { isMobileNumber, onlyString } from "@/app/helper/regex";
 
 const CreateRider = z.object({
     // admin_id     Int
-    username: z.string().min(6, { message: "Username should be atleast 6 characters." }),
+    username: z.string().min(8, { message: "Username should be atleast 8 characters." }),
     // password     String
-    first_name: z.string(),
-    middle_name: z.string(),
-    last_name: z.string(),
-    contact_number: z.string(),
+    first_name: onlyString,
+    middle_name: onlyString,
+    last_name: onlyString,
+    contact_number: isMobileNumber,
 })
 
 const FormRider = () => {

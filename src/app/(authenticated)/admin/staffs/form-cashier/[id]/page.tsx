@@ -19,29 +19,35 @@ import { api } from "@/trpc/react";
 import { useEffect } from "react";
 import { useStore } from "@/lib/store/app";
 import { toast } from "@/components/ui/use-toast";
+import { onlyString } from "@/app/helper/regex";
 
 const CreateCashier = z.object({
     // admin_id     Int
     username: z.string().min(8, { message: "Username should be atleast 8 characters." }),
     // password     String
-    first_name: z.string(),
-    middle_name: z.string(),
-    last_name: z.string(),
+    first_name: onlyString,
+    middle_name: onlyString,
+    last_name: onlyString,
 })
 
 const FormCashier = () => {
     const { id } = useParams()
     const { user } = useStore()
     const router = useRouter()
-    const form = useForm<z.infer<typeof CreateCashier>>({
-        resolver: zodResolver(CreateCashier),
-        //   defaultValues: {}
-    })
 
     const { data: cashier, isLoading: cashierIsLoading } = api.cashier.getCashier.useQuery({
         id: Number(id)
     }, {
         enabled: id !== "new"
+    })
+    const form = useForm<z.infer<typeof CreateCashier>>({
+        resolver: zodResolver(CreateCashier),
+        values: !!cashier ? {
+            first_name :cashier.first_name,
+            middle_name :cashier.middle_name,
+            last_name :cashier.last_name,
+            username :cashier.username,
+          } : undefined
     })
     const { refetch } = api.cashier.getAllCashier.useQuery() 
 
@@ -86,10 +92,10 @@ const FormCashier = () => {
 
     useEffect(() => {
         if (cashier) {
-            form.setValue("username", cashier.username)
-            form.setValue("first_name", cashier.first_name)
-            form.setValue("middle_name", cashier.middle_name)
-            form.setValue("last_name", cashier.last_name)
+            // form.setValue("username", cashier.username)
+            // form.setValue("first_name", cashier.first_name)
+            // form.setValue("middle_name", cashier.middle_name)
+            // form.setValue("last_name", cashier.last_name)
         }
     }, [form, cashier])
 
