@@ -22,9 +22,9 @@ import { type PaginationType } from "@/lib/types/pagination"
 import { formatCurrency } from "@/app/_utils/format"
 import { useParams, useRouter } from "next/navigation"
 import { type $Enums } from "@prisma/client"
-import { format } from "date-fns"
 
 import { toZonedTime, format as formatTZ } from 'date-fns-tz';
+import { timeDate, timeZone } from "@/app/helper/format"
 const OrdersContent = ({
   status,
   transactions,
@@ -50,9 +50,6 @@ transactionsIsRefetching : boolean
     skip:0
   })
   
-  // Time zone for Bohol, Philippines (Asia/Manila)
-  const boholTimeZone = 'Asia/Manila';
-  
     return ( 
         <Card x-chunk="dashboard-05-chunk-3" className=" h-full">
         <CardHeader className="px-7">
@@ -75,7 +72,7 @@ transactionsIsRefetching : boolean
               {
                 transactions?.slice(pagination.skip, pagination.skip+pagination.take).map((transaction)=>{
 
-              const boholTimeDate = toZonedTime(transaction.createdAt, boholTimeZone);
+              const boholTimeDate = timeDate(transaction.createdAt)
                   return (
                 <TableRow 
                 key={transaction.id} 
@@ -89,7 +86,7 @@ transactionsIsRefetching : boolean
                     </div>
                   </TableCell>
                   <TableCell >
-                    {formatTZ(boholTimeDate, "PP - hh:mm aa", {timeZone:boholTimeZone})}
+                    {formatTZ(boholTimeDate, "PP - hh:mm aa", {timeZone:timeZone})}
                   </TableCell>
                   <TableCell className="text-center">
                     {formatCurrency(transaction.sub_total)}

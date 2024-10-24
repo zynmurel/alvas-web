@@ -7,18 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { format } from "date-fns"
 import { Separator } from "@/components/ui/separator"
 import { api } from "@/trpc/react"
 import { useParams } from "next/navigation"
 import LoadingOrder from "./_components/loading"
 import OrderNotFound from "./_components/not-found"
-import { formatCurrency } from "@/app/helper/format"
+import { formatCurrency, timeDate, timeZone } from "@/app/helper/format"
 import { Badge } from "@/components/ui/badge"
 import { type $Enums } from "@prisma/client"
 import AssignRider from "./_components/assign-rider"
 import CancelOrder from "./_components/cancel-order"
 import MarkDoneOrder from "./_components/mark-done-order"
+import { format } from "date-fns-tz"
 
 const BadgeStatus = ({status}:{status : $Enums.transaction_status}) => {
   if(status==="PENDING"){
@@ -54,6 +54,8 @@ const Page = () => {
     return <LoadingOrder/>
   }
   if(transaction){
+
+    const boholTimeDate = timeDate(transaction.order_date)
     return ( <Card
       className="overflow-hidden" x-chunk="dashboard-05-chunk-4"
     >
@@ -62,7 +64,7 @@ const Page = () => {
           <CardTitle className=" flex items-center gap-2 text-lg w-full justify-between">
             Order <BadgeStatus status={transaction.status}/>
           </CardTitle>
-          <CardDescription>Date: {format(transaction.order_date, "PPP")}</CardDescription>
+          <CardDescription>Date: {format(boholTimeDate, "PPP", {timeZone:timeZone})}</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="p-6 text-sm pt-2">
