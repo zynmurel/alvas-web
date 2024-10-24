@@ -23,6 +23,8 @@ import { formatCurrency } from "@/app/_utils/format"
 import { useParams, useRouter } from "next/navigation"
 import { type $Enums } from "@prisma/client"
 import { format } from "date-fns"
+
+import { toZonedTime, format as formatTZ } from 'date-fns-tz';
 const OrdersContent = ({
   status,
   transactions,
@@ -47,6 +49,10 @@ transactionsIsRefetching : boolean
     take:10,
     skip:0
   })
+  
+  // Time zone for Bohol, Philippines (Asia/Manila)
+  const boholTimeZone = 'Asia/Manila';
+  
     return ( 
         <Card x-chunk="dashboard-05-chunk-3" className=" h-full">
         <CardHeader className="px-7">
@@ -67,7 +73,10 @@ transactionsIsRefetching : boolean
             </TableHeader>
             <TableBody>
               {
-                transactions?.slice(pagination.skip, pagination.skip+pagination.take).map((transaction)=>(
+                transactions?.slice(pagination.skip, pagination.skip+pagination.take).map((transaction)=>{
+
+              const boholTimeDate = toZonedTime(transaction.createdAt, boholTimeZone);
+                  return (
                 <TableRow 
                 key={transaction.id} 
                 onClick={()=>router.push("/admin/orders/"+transaction.id)}
@@ -80,7 +89,7 @@ transactionsIsRefetching : boolean
                     </div>
                   </TableCell>
                   <TableCell >
-                    {format(transaction.createdAt, "PP - hh:mm aa")}
+                    {formatTZ(boholTimeDate, "PP - hh:mm aa", {timeZone:boholTimeZone})}
                   </TableCell>
                   <TableCell className="text-center">
                     {formatCurrency(transaction.sub_total)}
@@ -89,7 +98,7 @@ transactionsIsRefetching : boolean
                     {formatCurrency(transaction.total_amount)}
                   </TableCell>
                 </TableRow>
-                ))
+                )})
               }
             </TableBody>
           </Table>

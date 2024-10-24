@@ -46,7 +46,7 @@ const Page = () => {
                                 <PhilippinePeso className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : formatCurrency(data?.salesThisMonth || 0)}</div>
+                                <div className="text-2xl font-bold text-green-700 dark:text-green-500">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : formatCurrency(data?.salesThisMonth || 0)}</div>
                                 <p className="text-xs text-muted-foreground">
                                     Total sales for the month of {format(new Date(), "MMMM")}
                                 </p>
@@ -60,7 +60,7 @@ const Page = () => {
                                 <Users className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : data?.totalUsers}</div>
+                                <div className="text-2xl font-bold text-green-700 dark:text-green-500">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : data?.totalUsers}</div>
                                 <p className="text-xs text-muted-foreground">
                                     Total registered users in your store.
                                 </p>
@@ -74,7 +74,7 @@ const Page = () => {
                                 <ShoppingCart className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : data?.totalProducts}</div>
+                                <div className="text-2xl font-bold text-green-700 dark:text-green-500">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : data?.totalProducts}</div>
                                 <p className="text-xs text-muted-foreground">
                                     Number of products available.
                                 </p>
@@ -86,7 +86,7 @@ const Page = () => {
                                 <PhilippinePeso className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : formatCurrency(data?.overAllSales || 0)}</div>
+                                <div className="text-2xl font-bold text-green-700 dark:text-green-500">{isPending ? <LoaderCircle size={30} className=" animate-spin text-gray-400" /> : formatCurrency(data?.overAllSales || 0)}</div>
                                 <p className="text-xs text-muted-foreground">
                                     Total of your overall sale.
                                 </p>
