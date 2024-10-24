@@ -38,12 +38,13 @@ export const customerOrderRouter = createTRPCRouter({
         orders
       }, ctx }) => {
         const admin = await ctx.db.admin.findFirst()
+        const settings = await ctx.db.settings.findFirst()
         const customer = await ctx.db.customer.findUnique({
           where : {
             id: customer_id
           }
         })
-        if(admin && customer) {
+        if(admin && customer && settings) {
           return await ctx.db.transaction.create({
             data : {
               total_amount,
@@ -55,7 +56,8 @@ export const customerOrderRouter = createTRPCRouter({
                 createMany : {
                   data : orders
                 } 
-              }
+              },
+              delivery_fee : settings?.delivery_fee
             }
           })
         }else {
