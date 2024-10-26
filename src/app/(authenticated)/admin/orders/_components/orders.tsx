@@ -96,7 +96,7 @@ const OrdersContent = ({
                       <div className="hidden text-sm text-muted-foreground md:inline">{transaction.customer_contact} </div>
                       <div className="font-medium capitalize">{transaction.customer_name}</div>
                       <div className="hidden text-sm text-muted-foreground md:inline">
-                      <span className=" text-base font-bold text-black">{transaction.barangay}</span>
+                      <span className=" text-base font-bold text-black dark:text-white">{transaction.barangay}</span>
                       </div>
                     </TableCell>
                     <TableCell onClick={() => setTransaction(transaction)} >
