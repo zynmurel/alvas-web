@@ -12,6 +12,7 @@ interface AssignRider {
 }
 const MarkDoneOrder = ({refetchTransaction ,transactionIds, grouped_delivery_id}:AssignRider) => {
     const trContext = useTransactionContext()
+    console.log(grouped_delivery_id)
     const { mutateAsync, isPending } = api.transaction.doneTransaction.useMutation({
         onSuccess : async () => {
             refetchTransaction()

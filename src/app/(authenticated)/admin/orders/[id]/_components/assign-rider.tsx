@@ -69,7 +69,6 @@ const AssignRider = ({riders, searchRider, transactionIds, delivery_fee, setSear
     };
 
     return (
-        <CardFooter className="flex flex-row items-center justify-end px-6 py-3">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -79,7 +78,7 @@ const AssignRider = ({riders, searchRider, transactionIds, delivery_fee, setSear
                         control={form.control}
                         name="rider_id"
                         render={({ field }) => (
-                            <FormItem className="relative flex flex-col w-[200px]">
+                            <FormItem className="relative flex flex-col w-[200px] mt-1">
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -137,10 +136,9 @@ const AssignRider = ({riders, searchRider, transactionIds, delivery_fee, setSear
                             </FormItem>
                         )}
                     />
-                    <Button disabled={assignRiderToTransactionIsPending} size={"sm"} className=" flex flex-row items-center gap-1 self-end"><Truck size={15} />Assign Rider</Button>
+                    <Button disabled={assignRiderToTransactionIsPending} size={"sm"} className=" flex flex-row items-center gap-1 self-end"><Truck size={15} />Assign</Button>
                 </form>
             </Form>
-        </CardFooter>
     );
 }
 

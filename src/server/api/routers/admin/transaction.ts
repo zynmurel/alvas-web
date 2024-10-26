@@ -187,7 +187,8 @@ export const transactionRouter = createTRPCRouter({
           }
         },
         data: {
-          status: "CANCELLED"
+          status: "CANCELLED",
+          grouped_delivery_id : grouped_delivery_id
         }
       })
     }),
@@ -215,7 +216,8 @@ export const transactionRouter = createTRPCRouter({
         }
       },
       data: {
-        status: "DONE"
+        status: "DONE",
+        grouped_delivery_id : grouped_delivery_id
       }
     })
   }),

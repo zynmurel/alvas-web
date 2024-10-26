@@ -79,6 +79,7 @@ const OrdersContent = ({
               <TableHead className="text-start">Sub Total</TableHead>
               <TableHead className="text-start">Delivery Fee</TableHead>
               <TableHead className="text-start">Total Amount</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
