@@ -115,7 +115,7 @@ const OrdersContent = ({
                     <TableCell className="text-start" onClick={() => setTransaction(transaction)}>
                       {formatCurrency(transaction.total_amount)}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className=" flex items-center justify-center">
                       {
                         transaction.status === "PENDING" &&
                         <AssignRider
