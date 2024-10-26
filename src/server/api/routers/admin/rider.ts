@@ -27,6 +27,7 @@ export const riderRouter = createTRPCRouter({
       middle_name : z.string(),
       last_name : z.string(),
       contact_number : z.string(),
+      profile_image:z.string()
     }))
     .mutation(async({ctx, input : {
       id,
@@ -35,7 +36,8 @@ export const riderRouter = createTRPCRouter({
       first_name,
       middle_name,
       last_name,
-      contact_number
+      contact_number,
+      profile_image
     }})=>{
       const settings =await ctx.db.settings.findUnique({
           where : {
@@ -54,14 +56,16 @@ export const riderRouter = createTRPCRouter({
                   middle_name,
                   last_name,
                   contact_number,
-                  password : settings.defaultPassForStaff
+                  password : settings.defaultPassForStaff,
+                  profile_image
               },
               update : {
                   username,
                   first_name,
                   middle_name,
                   last_name,
-                  contact_number
+                  contact_number,
+                  profile_image
               }
           })
       }else {

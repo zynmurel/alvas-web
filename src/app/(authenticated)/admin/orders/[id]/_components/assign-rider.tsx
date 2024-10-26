@@ -22,15 +22,16 @@ interface AssignRider {
     searchRider:string;
     setSearchRider:(text:string)=>void 
     riderIsLoading : boolean;
-    refetchTransaction: ()=>void
+    refetchTransaction: ()=>void;
+    transactionIds : number[]
+    delivery_fee:number
 }
 
 const AssignRiderForm = z.object({
     rider_id: z.number().nullish(),
 });
 
-const AssignRider = ({riders, searchRider, setSearchRider, riderIsLoading, refetchTransaction}:AssignRider) => {
-    const { id } = useParams()
+const AssignRider = ({riders, searchRider, transactionIds, delivery_fee, setSearchRider, riderIsLoading, refetchTransaction}:AssignRider) => {
     const trContext = useTransactionContext()
     const form = useForm<z.infer<typeof AssignRiderForm>>({
         resolver: zodResolver(AssignRiderForm),
@@ -51,7 +52,8 @@ const AssignRider = ({riders, searchRider, setSearchRider, riderIsLoading, refet
         if(!!data.rider_id){
             await assignRiderToTransaction({
                 rider_id : data.rider_id,
-                transaction_id : Number(id)
+                transaction_ids:transactionIds,
+                delivery_fee : delivery_fee
             })
         } else {
             form.setError("rider_id", { message : "Rider is required"})
@@ -67,18 +69,17 @@ const AssignRider = ({riders, searchRider, setSearchRider, riderIsLoading, refet
     };
 
     return (
-        <CardFooter className="flex flex-row items-center justify-end border-t bg-muted/50 px-6 py-3">
+        <CardFooter className="flex flex-row items-center justify-end px-6 py-3">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className=" w-full flex flex-col items-start gap-3"
+                    className=" w-full flex flex-row items-center gap-3 justify-center"
                 >
                     <FormField
                         control={form.control}
                         name="rider_id"
                         render={({ field }) => (
-                            <FormItem className="relative flex flex-col w-full">
-                                <FormLabel>Select Rider</FormLabel>
+                            <FormItem className="relative flex flex-col w-[200px]">
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -104,7 +105,7 @@ const AssignRider = ({riders, searchRider, setSearchRider, riderIsLoading, refet
                                                 value={searchRider}
                                                 onChange={(e) => setSearchRider(e.target.value)}
                                                 placeholder="Search account number or name"
-                                                className="w-auto m-1 border-none h-9"
+                                                className="w-auto m-1 border-none h-9 max-w-[100]"
                                             />
                                             {/* <CommandEmpty>No Agent Found</CommandEmpty> */}
                                             <div className="p-1">

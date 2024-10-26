@@ -21,7 +21,7 @@ import { DataPagination } from "./table-components/pagination"
 import { type PaginationType } from "@/lib/types/pagination"
 import { formatCurrency } from "@/app/_utils/format"
 import { useParams, useRouter } from "next/navigation"
-import { type $Enums } from "@prisma/client"
+import { barangays, customer, orders, transaction, type $Enums } from "@prisma/client"
 import { format } from "date-fns"
 const OrdersContent = ({
   status,
@@ -30,13 +30,20 @@ const OrdersContent = ({
 }: {
   status: $Enums.transaction_status;
   transactions: {
-    id: number;
-    customer_name?: string;
+    id: string;
+    status: $Enums.transaction_status;
+    customer_name: string;
     customer_contact?: string;
     sub_total: number;
-    createdAt: Date;
     delivery_fee: number;
     total_amount: number;
+    total_transactions: number;
+    createdAt: Date;
+    barangay: string;
+    transactions: (transaction & {
+      orders: orders[];
+      customer?: (customer & { barangay: barangays }) | null
+    })[]
   }[] | undefined;
   transactionsIsLoading: boolean;
   transactionsIsRefetching: boolean
@@ -62,6 +69,7 @@ const OrdersContent = ({
               <TableHead>Customer</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-center">Sub Total</TableHead>
+              <TableHead className="text-center">Delivery Fee</TableHead>
               <TableHead className="text-center">Total Amount</TableHead>
             </TableRow>
           </TableHeader>

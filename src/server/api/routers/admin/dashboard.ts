@@ -16,19 +16,17 @@ export const dashboardRouter = createTRPCRouter({
             },
             _sum : {
                 total_amount : true,
-                delivery_fee : true
             }
-        }).then(({ _sum : { delivery_fee, total_amount }})=>((delivery_fee||0) + (total_amount||0)))
+        }).then(({ _sum : { total_amount }})=>((total_amount||0)))
 
         const overAllSales = () => ctx.db.transaction.aggregate({
             where : {
                 status : "DONE",
             },
             _sum : {
-                total_amount : true,
-                delivery_fee : true
+                total_amount : true
             }
-        }).then(({ _sum : { delivery_fee, total_amount }})=>((delivery_fee||0) + (total_amount||0)))
+        }).then(({ _sum : { total_amount }})=>((total_amount||0)))
 
         const totalUsers = () => ctx.db.customer.count()
 
@@ -43,6 +41,7 @@ export const dashboardRouter = createTRPCRouter({
             take : 5,
              include : {
                 customer :true,
+                grouped_delivery:true
              }
         }).then((data)=> data.map((cust)=>{
             return {
@@ -50,7 +49,7 @@ export const dashboardRouter = createTRPCRouter({
                 customer : `${cust.customer?.first_name} ${cust.customer?.middle_name[0]}. ${cust.customer?.last_name}`,
                 contact : cust.customer?.contact_number || "",
                 status : cust.status,
-                total_amount : (cust.delivery_fee || 0) + cust.total_amount
+                total_amount : (cust.grouped_delivery?.delivery_fee || 0) + cust.total_amount
             }
         }))
 
@@ -59,6 +58,7 @@ export const dashboardRouter = createTRPCRouter({
              include : {
                 rider :true,
                 cashier : true,
+                grouped_delivery:true
              }
         }).then((data)=> data.map((cust)=>{
             const proccessed_by = cust.rider || cust.cashier
@@ -66,7 +66,7 @@ export const dashboardRouter = createTRPCRouter({
                 id:cust.id,
                 proccessed_by : `${proccessed_by?.first_name} ${proccessed_by?.middle_name[0]}. ${proccessed_by?.last_name}`,
                 type : cust.rider ? "Rider" : "Cashier",
-                total_amount : (cust.delivery_fee||0) + cust.total_amount
+                total_amount : (cust.grouped_delivery?.delivery_fee || 0) + cust.total_amount
             }
         }))
         

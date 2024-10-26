@@ -23,15 +23,15 @@ export default function OrderModal({ open, setOpen }: {
     setOpen: (open: TransactionType | undefined) => void;
 }) {
     const { id } = useParams()
-    const [openConfirm,setOpenConfirm] = useState(false)
-    const [openCancel,setOpenCancel] = useState(false)
+    const [openConfirm, setOpenConfirm] = useState(false)
+    const [openCancel, setOpenCancel] = useState(false)
     const setOpenChange = (open: boolean) => {
         if (!open) {
             setOpen(undefined)
         }
     }
 
-    const { mutateAsync:cancelOrder, isPending:cancelOrderIsPending } = api.user_rider.delivery.cancelTransaction.useMutation({
+    const { mutateAsync: cancelOrder, isPending: cancelOrderIsPending } = api.user_rider.delivery.cancelTransaction.useMutation({
         onSuccess: async () => {
             toast({
                 title: "Cancelled",
@@ -50,7 +50,7 @@ export default function OrderModal({ open, setOpen }: {
         }
     })
 
-    const { mutateAsync:orderDelivered, isPending:orderDeliveredIsPending } = api.user_rider.delivery.transactionDelivered.useMutation({
+    const { mutateAsync: orderDelivered, isPending: orderDeliveredIsPending } = api.user_rider.delivery.transactionDelivered.useMutation({
         onSuccess: async () => {
             toast({
                 title: "Done",
@@ -69,22 +69,22 @@ export default function OrderModal({ open, setOpen }: {
         }
     })
 
-    const {refetch:refetchForDelivery } = api.user_rider.delivery.getTransactionsForDelivery.useQuery({
-        id:Number(id),
-    }, {enabled : false})
-    const { refetch:refetchDelivered } = api.user_rider.delivery.getTransactionsDelivered.useQuery({
-        id:Number(id),
-    }, {enabled : false})
-    const refetchOrders =async () => {
+    const { refetch: refetchForDelivery } = api.user_rider.delivery.getTransactionsForDelivery.useQuery({
+        id: Number(id),
+    }, { enabled: false })
+    const { refetch: refetchDelivered } = api.user_rider.delivery.getTransactionsDelivered.useQuery({
+        id: Number(id),
+    }, { enabled: false })
+    const refetchOrders = async () => {
         await refetchForDelivery()
         await refetchDelivered()
     }
     if (!open) return <></>
 
-    const totalAmount = open.orders.reduce((arr, curr) => {
-        return arr + (curr.product.amount * curr.quantity)
+    const totalAmount = open.transactions.reduce((arr, curr) => {
+        return arr + curr.orders.reduce((ar, cu) => ar + (cu.product.amount * cu.quantity), 0)
     }, 0)
-    const orders = open?.orders || []
+    const transaction = open?.transactions || []
 
     const onCancel = async () => {
         if (open.id) {
@@ -109,10 +109,10 @@ export default function OrderModal({ open, setOpen }: {
                     <DialogTitle>{"Customer's Orders"}</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-row gap-4 py-4">
-                <ConfirmOrderModal open={openConfirm} setOpen={setOpenConfirm} isLoading={orderDeliveredIsPending} onSubmit={onDelivered}/>
-                <CancelOrderModal open={openCancel} setOpen={setOpenCancel} isLoading={cancelOrderIsPending} onSubmit={onCancel}/>
+                    <ConfirmOrderModal open={openConfirm} setOpen={setOpenConfirm} isLoading={orderDeliveredIsPending} onSubmit={onDelivered} />
+                    <CancelOrderModal open={openCancel} setOpen={setOpenCancel} isLoading={cancelOrderIsPending} onSubmit={onCancel} />
                     {
-                        !!orders.length && <div className=" text-sm w-full">
+                        !!transaction.length && <div className=" text-sm w-full">
                             <div className=" flex flex-row justify-between items-center">
 
                                 <p className=" font-semibold">Orders</p>
@@ -121,14 +121,20 @@ export default function OrderModal({ open, setOpen }: {
                             <Separator className=" my-2" />
                             <div className=" flex flex-col gap-4 w-full overflow-scroll" style={{ maxHeight: "30vh" }}>
                                 {
-                                    orders?.map((order) => {
-                                        return <div key={order.product.id} className=" flex flex-row justify-between w-full">
-                                            <p>{order.product.product_name} X {order.quantity}</p>
-                                            <div className=" flex flex-row gap-2">
-                                                <p>{formatCurrency(order.product.amount * order.quantity)}</p>
-                                            </div>
-                                        </div>
-                                    })
+                                    transaction?.map((transaction, index) => (
+                                        <div key={index} className=" flex flex-col gap-1"><div>Group order {index + 1}</div>
+                                            {
+                                                transaction.orders.map(order => {
+                                                    return <div key={order.product.id} className=" flex flex-row justify-between w-full">
+                                                        <p>{order.product.product_name} X {order.quantity}</p>
+                                                        <div className=" flex flex-row gap-2">
+                                                            <p>{formatCurrency(order.product.amount * order.quantity)}</p>
+                                                        </div>
+                                                    </div>
+                                                })
+                                            }</div>
+
+                                    ))
                                 }
                             </div>
                             <div>
@@ -153,18 +159,18 @@ export default function OrderModal({ open, setOpen }: {
                                     <dl className="grid gap-1">
                                         <div className="flex items-center gap-1">
                                             <User size={15} strokeWidth={3} />
-                                            <dd className=" capitalize font-bold">{open.customer?.first_name} {open.customer?.middle_name} {open.customer?.last_name}</dd>
+                                            <dd className=" capitalize font-bold">{open.transactions[0]?.customer?.first_name} {open.transactions[0]?.customer?.middle_name} {open.transactions[0]?.customer?.last_name}</dd>
                                         </div>
                                         <div className="flex items-center gap-1">
                                             <Phone size={15} strokeWidth={3} />
                                             <dd className=" font-bold">
-                                                <a href="tel:">{open.customer?.contact_number}</a>
+                                                <a href="tel:">{open.transactions[0]?.customer?.contact_number}</a>
                                             </dd>
                                         </div>
                                     </dl>
                                 </div>}
                                 <div className=" flex flex-row justify-end gap-2 w-full mt-5">
-                                    {open.status !== "ONGOING" &&<Button onClick={() => setOpen(undefined)} variant={"outline"}>Close</Button>}
+                                    {open.status !== "ONGOING" && <Button onClick={() => setOpen(undefined)} variant={"outline"}>Close</Button>}
                                     {open.status === "ONGOING" &&
                                         <div className="flex flex-row justify-end gap-2">
                                             <Button onClick={() => setOpenCancel(true)} variant={"destructive"} className="">Cancel Order</Button>

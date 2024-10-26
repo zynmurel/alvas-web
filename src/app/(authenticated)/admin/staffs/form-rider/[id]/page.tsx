@@ -16,10 +16,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store/app";
 import { toast } from "@/components/ui/use-toast";
 import { isMobileNumber, onlyString } from "@/app/helper/regex";
+import { Plus } from "lucide-react";
+import { uploadImage } from "@/app/helper/upload";
 
 const CreateRider = z.object({
     // admin_id     Int
@@ -29,17 +31,23 @@ const CreateRider = z.object({
     middle_name: onlyString,
     last_name: onlyString,
     contact_number: isMobileNumber,
+    profile_image: z.instanceof(File)
+        .optional()
+        .refine((file) => !file || (file.size / 1024 / 1024) <= 10, 'File size must be less than 10MB')
+        .refine((file) => file ? ['image/png', 'image/jpeg'].includes(file.type) : true, 'File must be a PNG or JPEG'),
 })
 
 const FormRider = () => {
     const { id } = useParams()
     const { user } = useStore()
     const router = useRouter()
+    const [productImage, setProductImage] = useState<string | null>(null)
+    const [productImageLoading, setProductImageLoading] = useState(false)
     const form = useForm<z.infer<typeof CreateRider>>({
         resolver: zodResolver(CreateRider),
         //   defaultValues: {}
     })
-    const { refetch } = api.rider.getAllRider.useQuery() 
+    const { refetch } = api.rider.getAllRider.useQuery()
 
     const { data: rider, isLoading: riderIsLoading } = api.rider.getRider.useQuery({
         id: Number(id)
@@ -47,42 +55,60 @@ const FormRider = () => {
         enabled: id !== "new"
     })
 
-    const { mutateAsync:createRider, isPending:createRiderPending } = api.rider.createRider.useMutation({
-        onSuccess:async ()=>{
+    const { mutateAsync: createRider, isPending: createRiderPending } = api.rider.createRider.useMutation({
+        onSuccess: async () => {
             toast({
-                title:"Success!",
-                description:id === "new" ? "Rider added successfully!":"Rider updated successfully!"
+                title: "Success!",
+                description: id === "new" ? "Rider added successfully!" : "Rider updated successfully!"
             })
             await refetch()
             router.push("/admin/staffs")
         },
-        onError : (e) =>{
-            if(e.message.includes("Unique constraint failed on the fields")){
+        onError: (e) => {
+            if (e.message.includes("Unique constraint failed on the fields")) {
                 toast({
-                    variant:"destructive",
-                    title:"Failed",
-                    description:"Username already used."
-                  })
-                form.setError("username", { message : "Username already used."})
-            }else{
+                    variant: "destructive",
+                    title: "Failed",
+                    description: "Username already used."
+                })
+                form.setError("username", { message: "Username already used." })
+            } else {
                 toast({
-                  variant:"destructive",
-                  title:"Failed",
-                  description:e.message
+                    variant: "destructive",
+                    title: "Failed",
+                    description: e.message
                 })
             }
         }
     })
-
+    const _uploadImage = async (file: File | undefined) => {
+        if (file) {
+            setProductImageLoading(true)
+            return await uploadImage(file).finally(() => setProductImageLoading(false))
+        } else {
+            return null
+        }
+    }
     const onSubmitProduct = async (data: z.infer<typeof CreateRider>) => {
-        if(user?.id){
-            await createRider({
-                id: id === "new" ? undefined : Number(id),
-                admin_id : user.id ,
-                ...data
-            })
-        }else {
-            throw new Error("No Admin Found")
+        let image = productImage
+        //setter of iamge if product image was uploaded
+        if (data.profile_image) {
+            image = await _uploadImage(data.profile_image)
+        }
+        if (!!image) {
+            if (user?.id) {
+                await createRider({
+                    id: id === "new" ? undefined : Number(id),
+                    admin_id: user.id,
+                    ...data,
+                    profile_image: image
+                })
+            } else {
+                throw new Error("User not found")
+            }
+        } else {
+            if (!image) form.setError("profile_image", { message: "Profile Image is required" })
+            throw new Error("Uploading Image Error")
         }
     }
 
@@ -93,6 +119,8 @@ const FormRider = () => {
             form.setValue("middle_name", rider.middle_name)
             form.setValue("last_name", rider.last_name)
             form.setValue("contact_number", rider.contact_number)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            setProductImage(rider.profile_image)
         }
     }, [form, rider])
 
@@ -103,6 +131,52 @@ const FormRider = () => {
                 <div className="w-full space-y-6">
                     <h1 className="font-semibold text-xl">{id !== "new" ? "Update Rider" : "Create Rider"}</h1>
 
+                    <FormField
+                        disabled={riderIsLoading}
+                        control={form.control}
+                        name="profile_image"
+                        render={() => (
+                            <FormItem className="flex flex-col justify-start w-full lg:col-span-1 col-span-full">
+                                <FormLabel className="text-gray-600">Product Image</FormLabel>
+                                <FormControl>
+                                    <div className="flex items-center justify-between w-40 my-2 overflow-hidden border-2 border-dashed rounded-3xl">
+                                        <label htmlFor="file" className="flex flex-col items-center justify-center w-full gap-2 text-xs text-gray-500 cursor-pointer aspect-square">
+                                            {
+                                                productImage ? <img alt="Profile Image" src={productImage} className="object-cover w-full h-full hover:brightness-75" /> :
+                                                    <>
+                                                        <Plus />
+                                                        <span>Profile Image</span>
+                                                    </>
+                                            }
+                                            <input
+                                                id="file"
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        const reader = new FileReader();
+                                                        reader.onloadend = () => {
+                                                            const base64String = reader.result as string;
+                                                            setProductImage(base64String);
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                        form.setValue("profile_image", file)
+                                                    }
+                                                }
+                                                }
+                                            />
+                                        </label>
+                                    </div>
+                                </FormControl>
+                                <FormDescription>
+                                    This is your image for the product.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <div className=" grid sm:grid-cols-2 gap-5">
                         <FormField
                             disabled={riderIsLoading}
@@ -192,8 +266,8 @@ const FormRider = () => {
                     </div>
                 </div>
                 <div className=" flex flex-col gap-5 sm:flex-row w-full justify-between items-end">
-                <div className=" text-xs text-orange-400"><span className=" font-semibold">Note:</span> Passwords are auto-generated based on the default password set in admin settings.</div>
-                <Button type="submit" disabled={createRiderPending || riderIsLoading} className="self-end ">{"Submit Rider"}</Button>
+                    <div className=" text-xs text-orange-400"><span className=" font-semibold">Note:</span> Passwords are auto-generated based on the default password set in admin settings.</div>
+                    <Button type="submit" disabled={productImageLoading ||createRiderPending || riderIsLoading} className="self-end ">{"Submit Rider"}</Button>
                 </div>
             </form>
         </Form>

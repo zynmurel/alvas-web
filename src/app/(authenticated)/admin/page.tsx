@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 'use client'
 import Link from "next/link"
 import {
@@ -29,11 +30,13 @@ import { formatCurrency } from "@/app/_utils/format"
 import { format } from "date-fns"
 import Loading from "./_components/table-components/loading"
 import NoFound from "./_components/table-components/no-found"
+import axios from "axios"
 
 const Page = () => {
     const { data, isPending } = api.dashboard.dashboardData.useQuery()
     return (
         <div className=" flex flex-col">
+            <button onClick={()=>axios.post("https://water-level-monitoring-web.vercel.app/api/water-flow-sensor", {value:'100'})}>asd</button>
             <div className="mx-auto grid w-full max-w-7xl gap-2">
                 <h1 className="text-3xl font-semibold">Dashboard</h1>
                 <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8">

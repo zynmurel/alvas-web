@@ -102,12 +102,12 @@ export function ViewTransactionModal({ open, setOpen }: {
                                 </div>
                                 <div className=" flex flex-row w-full justify-between">
                                     <p className="">Delivery Fee</p>
-                                    <p className=" font-semibold">{formatCurrency(open?.delivery_fee || 0)}</p>
+                                    <p className=" font-semibold">{formatCurrency(open?.group_delivery?.delivery_fee || 0)}</p>
                                 </div>
                                 <Separator className=" my-2" />
                                 <div className=" flex flex-row w-full justify-between">
                                     <p className=" font-semibold">Total Amount</p>
-                                    <p className=" font-semibold">{formatCurrency(totalAmount + (open?.delivery_fee || 0))}</p>
+                                    <p className=" font-semibold">{formatCurrency(totalAmount + (open?.group_delivery?.delivery_fee || 0))}</p>
                                 </div>
                                 <Separator className=" my-2" />
                                 {open.status==="ONGOING" &&<div className="grid gap-1 p-2 bg-slate-100 rounded border">

@@ -8,21 +8,26 @@ export const riderTransactionRouter = createTRPCRouter({
       delivery_rider_id: z.number()
     }))
     .query(async ({ ctx, input: { delivery_rider_id } }) => {
-      return await ctx.db.transaction.findMany({
+      return await ctx.db.grouped_delivery_by_customer.findMany({
         where: {
-          delivery_rider_id,
+          rider_id:delivery_rider_id,
         },
         orderBy: {
           createdAt: "desc"
         },
         include: {
-          orders: {
+          rider: true,
+          transactions: {
             include: {
-              product: true
-            }
+              orders: {
+                include: {
+                  product: true
+                }
+              },
+              customer: true
+            },
           },
-          rider: true
-        }
+        },
       })
     }),
 });

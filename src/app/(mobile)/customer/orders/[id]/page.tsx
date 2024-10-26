@@ -9,15 +9,17 @@ import { useState } from "react"
 import { useParams } from "next/navigation"
 import PendingTables from "./_components/pendings-table"
 import { ViewTransactionModal } from "./_components/view-transaction-modal"
-import { type delivery_rider, type orders, type products, type transaction } from "@prisma/client"
+import { barangays, customer, grouped_delivery_by_customer, type delivery_rider, type orders, type products, type transaction } from "@prisma/client"
 import DoneTable from "./_components/done-table"
 import CancelledTable from "./_components/cancelled-table"
 
 const statuses = ["ONGOING", "DONE", "CANCELLED"] as ("ONGOING"| "DONE"| "CANCELLED")[]
 
 export type TransactionType = (transaction & {
-    orders : (orders & {product : products})[],
-    rider : delivery_rider | null
+    orders : (orders & {product : products})[];
+    rider : delivery_rider | null;
+    group_delivery? : grouped_delivery_by_customer;
+    customer?: customer& { barangay:barangays}| null;
 })
 
 const Page = () => {

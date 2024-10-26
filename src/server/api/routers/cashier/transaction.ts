@@ -22,6 +22,7 @@ export const cashierTransactionRouter = createTRPCRouter({
                 createdAt : "desc"
             },
             include : {
+                grouped_delivery:true,
                 orders : {
                     include : {
                         product : {

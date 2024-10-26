@@ -1,182 +1,264 @@
 import { z } from "zod";
+/* eslint-disable @typescript-eslint/consistent-indexed-object-style */
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { $Enums, barangays, customer, delivery_rider, orders, products, transaction } from "@prisma/client";
 
 export const transactionRouter = createTRPCRouter({
   getAdminOrders: publicProcedure
-  .input(z.object({
-    admin_id : z.number()
-  }))
-    .query(({ ctx, input : {admin_id}}) => {
-      return ctx.db.transaction.findMany({
-        where :{
-          admin_id,
-            transaction_type : "DELIVERY"
-        },
-        include : {
-            orders:true,
-            customer:true
-        },
-        orderBy : {
-          createdAt:"desc"
-        }
-      }).then((transactions)=>(
-        transactions.map((transaction)=>({
-            id : transaction.id,
-            customer_name : `${transaction.customer?.first_name} ${transaction.customer?.middle_name[0]}. ${transaction.customer?.last_name}`,
-            customer_contact : transaction.customer?.contact_number,
-            sub_total: transaction.total_amount,
-            createdAt: transaction.createdAt,
-            status: transaction.status,
-            delivery_fee: transaction.delivery_fee || 0,
-            total_amount : (transaction.delivery_fee || 0) + transaction.total_amount
-        }))
-      ))
-    }),
-    getAdminOrder :publicProcedure
     .input(z.object({
-      id:z.number(),
+      admin_id: z.number()
     }))
-    .query(({ ctx, input:{
+    .query(({ ctx, input: { admin_id } }) => {
+      const data: {
+        [key: string]: {
+          id: string;
+          status: $Enums.transaction_status;
+          customer_name: string;
+          customer_contact?: string;
+          sub_total: number;
+          delivery_fee: number;
+          total_amount: number;
+          total_transactions: number;
+          createdAt: Date;
+          barangay: string;
+          transactions: (transaction & {
+            orders: (orders & { product: products })[];
+            customer?: (customer & { barangay: barangays }) | null
+          })[];
+          rider: delivery_rider | null;
+          grouped_delivery_id:number|null
+        };
+      } = {}
+      return ctx.db.transaction.findMany({
+        where: {
+          admin_id,
+          transaction_type: "DELIVERY",
+          customer_id: {
+            not: null
+          }
+        },
+        include: {
+          rider: true,
+          orders: {
+            include: {
+              product: true
+            }
+          },
+          grouped_delivery : true,
+          customer: {
+            include: {
+              barangay: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: "desc"
+        }
+      }).then((transactions) => {
+        transactions.forEach((transaction) => {
+          const findData = data[transaction.customer_id + transaction.status]
+          data[transaction.customer_id + transaction.status] = {
+            id: transaction.customer_id + transaction.status,
+            status: transaction.status,
+            rider: transaction.rider,
+            grouped_delivery_id: transaction.grouped_delivery_id || null,
+            barangay: transaction.customer?.barangay.barangay_name || "",
+            transactions: findData?.transactions.length ? [transaction, ...findData.transactions] : [transaction],
+            createdAt: transaction.createdAt,
+            customer_name: `${transaction.customer?.first_name} ${transaction.customer?.middle_name[0]}. ${transaction.customer?.last_name}`,
+            customer_contact: transaction.customer?.contact_number,
+            sub_total: (findData?.sub_total || 0) + transaction.total_amount,
+            delivery_fee: transaction.customer?.barangay.barangay_delivery_fee || 0,
+            total_amount: (transaction.customer?.barangay.barangay_delivery_fee || 0) + (findData?.sub_total || 0) + transaction.total_amount,
+            total_transactions: (findData?.total_transactions || 0) + 1
+          }
+        })
+        const returnData = Object.values(data)
+        return returnData
+      })
+    }),
+  getAdminOrder: publicProcedure
+    .input(z.object({
+      id: z.number(),
+    }))
+    .query(({ ctx, input: {
       id
     } }) => {
       return ctx.db.transaction.findUnique({
-        where :{
+        where: {
           id,
         },
-        include : {
-          orders:{
-            include : {
-              product : true
+        include: {
+          orders: {
+            include: {
+              product: true
             }
           },
-          customer:true,
-          rider : true
+          customer: true,
+          rider: true,
+          grouped_delivery : true
         }
-      }).then((transaction)=>{
-        if(transaction){
+      }).then((transaction) => {
+        if (transaction) {
           return {
-            status : transaction.status,
-            order_date : transaction.createdAt,
-            order_details : {
-              orders : transaction.orders.map(order=>({
-                product_name : order.product.product_name,
-                quantity : order.quantity,
-                price : order.product.amount
+            status: transaction.status,
+            order_date: transaction.createdAt,
+            order_details: {
+              orders: transaction.orders.map(order => ({
+                product_name: order.product.product_name,
+                quantity: order.quantity,
+                price: order.product.amount
               })),
-              sub_total : transaction.total_amount,
-              delivery_fee : transaction.delivery_fee || 0
+              sub_total: transaction.total_amount,
+              delivery_fee: transaction.grouped_delivery?.delivery_fee || 0
             },
-            customer_info : {
-              name :`${transaction.customer?.first_name} ${transaction.customer?.middle_name[0]}. ${transaction.customer?.last_name}`,
-              contact_number : transaction.customer?.contact_number
+            customer_info: {
+              name: `${transaction.customer?.first_name} ${transaction.customer?.middle_name[0]}. ${transaction.customer?.last_name}`,
+              contact_number: transaction.customer?.contact_number
             },
-            delivery_info :transaction.rider ? {
-              name : `${transaction.rider.first_name} ${transaction.rider.middle_name[0]}. ${transaction.rider.last_name}`,
-              contact_number : transaction.rider.contact_number
+            delivery_info: transaction.rider ? {
+              name: `${transaction.rider.first_name} ${transaction.rider.middle_name[0]}. ${transaction.rider.last_name}`,
+              contact_number: transaction.rider.contact_number
             } : null
           }
-        }else{
+        } else {
           throw new Error("Transaction not found")
         }
       })
     }),
-    assignRiderToTransaction :publicProcedure
+  assignRiderToTransaction: publicProcedure
     .input(z.object({
-      transaction_id:z.number(),
-      rider_id:z.number(),
+      transaction_ids: z.array(z.number()),
+      rider_id: z.number(),
+      delivery_fee: z.number(),
     }))
-    .mutation(async({ ctx, input:{
-      transaction_id,
-      rider_id
-    } })=>{
+    .mutation(async ({ ctx, input: {
+      transaction_ids,
+      rider_id,
+      delivery_fee
+    } }) => {
       const settings = await ctx.db.settings.findFirst()
-      if(settings){
-        return ctx.db.transaction.update({
-          where : {
-            id:transaction_id
-          },
+      if (settings) {
+        return  await ctx.db.grouped_delivery_by_customer.create({
           data : {
-            delivery_rider_id : rider_id,
-            status : "ONGOING",
-            delivery_fee :settings?.delivery_fee || 0
+            rider_id,
+            delivery_fee
           }
+        }).then(async(data)=>{
+          return await ctx.db.transaction.updateMany({
+            where : {
+              id : {
+                in : transaction_ids,
+              },
+            },
+            data : {
+              delivery_rider_id:rider_id,
+              grouped_delivery_id : data.id,
+              status : "ONGOING"
+            }
+          })
         })
       } else {
         return null
       }
     }),
-    cancelTransaction :publicProcedure
+  cancelTransaction: publicProcedure
     .input(z.object({
-      transaction_id:z.number(),
+      transaction_ids: z.array(z.number()),
+      grouped_delivery_id:z.number()
     }))
-    .mutation(({ ctx, input:{
-      transaction_id,
-    } })=>{
-      return ctx.db.transaction.update({
+    .mutation(async({ ctx, input: {
+      transaction_ids,
+      grouped_delivery_id
+    } }) => {
+      await ctx.db.grouped_delivery_by_customer.update({
         where : {
-          id:transaction_id
-        },
+          id: grouped_delivery_id
+        }, 
         data : {
-          status : "CANCELLED"
+          status:"CANCELLED"
+        }
+      })
+      return ctx.db.transaction.updateMany({
+        where: {
+          id: {
+            in:transaction_ids
+          }
+        },
+        data: {
+          status: "CANCELLED"
         }
       })
     }),
-    doneTransaction :publicProcedure
-    .input(z.object({
-      transaction_id:z.number(),
-    }))
-    .mutation(({ ctx, input:{
-      transaction_id,
-    } })=>{
-      return ctx.db.transaction.update({
-        where : {
-          id:transaction_id
-        },
-        data : {
-          status : "DONE"
+  doneTransaction: publicProcedure
+  .input(z.object({
+    transaction_ids: z.array(z.number()),
+    grouped_delivery_id:z.number()
+  }))
+  .mutation(async({ ctx, input: {
+    transaction_ids,
+    grouped_delivery_id
+  } }) => {
+    await ctx.db.grouped_delivery_by_customer.update({
+      where : {
+        id: grouped_delivery_id
+      }, 
+      data : {
+        status:"DONE"
+      }
+    })
+    return ctx.db.transaction.updateMany({
+      where: {
+        id: {
+          in:transaction_ids
         }
-      })
-    }),
-    getTransactionsByStatus  :publicProcedure
+      },
+      data: {
+        status: "DONE"
+      }
+    })
+  }),
+  getTransactionsByStatus: publicProcedure
     .input(z.object({
-      admin_id:z.number(),
-      transaction_type:z.enum(["DINE_IN", "DELIVERY", "PICK_UP", "ALL"]),
-      date : z.object({
-        from : z.date(),
-        to : z.date()
+      admin_id: z.number(),
+      transaction_type: z.enum(["DINE_IN", "DELIVERY", "PICK_UP", "ALL"]),
+      date: z.object({
+        from: z.date(),
+        to: z.date()
       })
     }))
-    .query(({ ctx, input:{
+    .query(({ ctx, input: {
       admin_id,
       transaction_type,
       date
-    } })=>{
+    } }) => {
       const whereTransactionType = transaction_type === "ALL" ? {} : { transaction_type: transaction_type }
       return ctx.db.transaction.findMany({
-        where : {
+        where: {
           admin_id,
-          status :"DONE",
-          createdAt : {
-            gte : date.from,
-            lte : date.to
+          status: "DONE",
+          createdAt: {
+            gte: date.from,
+            lte: date.to
           },
           ...whereTransactionType
         },
-        include : {
-          cashier : true,
-          rider : true,
-          customer : true,
+        include: {
+          cashier: true,
+          rider: true,
+          customer: true,
+          grouped_delivery:true
         }
-      }).then((transacs)=>{
-        const transactions = transacs.map((transaction)=>{
+      }).then((transacs) => {
+        const transactions = transacs.map((transaction) => {
           return {
-            id : transaction.id,
-            total_amount : transaction.total_amount,
-            transact_by : transaction.rider || transaction.cashier,
-            transact_by_type : transaction.rider ? "Rider" : "Cashier",
-            transaction_type : transaction.rider ? "DELIVERY" : "DINE_IN",
-            delivery_fee : transaction.delivery_fee,
+            id: transaction.id,
+            total_amount: transaction.total_amount,
+            transact_by: transaction.rider || transaction.cashier,
+            transact_by_type: transaction.rider ? "Rider" : "Cashier",
+            transaction_type: transaction.rider ? "DELIVERY" : "DINE_IN",
+            delivery_fee: transaction.grouped_delivery?.delivery_fee,
           }
         })
         const total_sub_total = transactions.reduce(
@@ -189,12 +271,12 @@ export const transactionRouter = createTRPCRouter({
         );
         return {
           transactions,
-          total_transactions : transactions.length,
+          total_transactions: transactions.length,
           total_sub_total,
           total_delivery_fee,
-          total_amount : total_sub_total + total_delivery_fee,
+          total_amount: total_sub_total + total_delivery_fee,
         }
-          
+
       })
     }),
 });

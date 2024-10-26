@@ -6,7 +6,7 @@ import {
 import { api } from "@/trpc/react"
 import { useState } from "react"
 import { useParams } from "next/navigation"
-import { type customer, type orders, type products, type transaction } from "@prisma/client"
+import { grouped_delivery_by_customer, type customer, type orders, type products, type transaction } from "@prisma/client"
 import { RefreshCcw, TableProperties, Truck } from "lucide-react"
 import ForDelivery from "./_components/delivery"
 import Delivered from "./_components/delivered"
@@ -24,10 +24,12 @@ const menu = [{
     icon: <Truck size={18} />
 }] as { key: MenuType; label: string; icon: React.JSX.Element }[]
 
-export type TransactionType = (transaction & {
-    orders: (orders & { product: products })[],
-    customer: customer | null
-})
+export type TransactionType = grouped_delivery_by_customer & {
+    transactions : (transaction & {
+        orders: (orders & { product: products })[],
+        customer: customer | null
+    })[]
+}
 
 const Page = () => {
     const {id} = useParams()

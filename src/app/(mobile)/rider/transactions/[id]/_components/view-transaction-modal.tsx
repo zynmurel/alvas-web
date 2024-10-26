@@ -53,10 +53,10 @@ export function ViewTransactionModal({ open, setOpen }: {
     })
     if (!open) return <></>
 
-    const totalAmount = open.orders.reduce((arr, curr) => {
-        return arr + (curr.product.amount * curr.quantity)
+    const totalAmount = open.transactions.reduce((arr, curr) => {
+        return arr + curr.orders.reduce((a,c)=>(a+(c.product.amount*c.quantity)),0)
     }, 0)
-    const orders = open?.orders || []
+    const transaction = open?.transactions || []
     const onCancel = async (id: number | undefined) => {
         if (id) {
             await mutateAsync({
@@ -75,7 +75,7 @@ export function ViewTransactionModal({ open, setOpen }: {
                 </DialogHeader>
                 <div className="flex flex-row gap-4 py-4">
                     {
-                        !!orders.length && <div className=" text-sm w-full">
+                        !!transaction.length && <div className=" text-sm w-full">
                             <div className=" flex flex-row justify-between items-center">
 
                                 <p className=" font-semibold">Orders</p>
@@ -83,15 +83,21 @@ export function ViewTransactionModal({ open, setOpen }: {
                             </div>
                             <Separator className=" my-2" />
                             <div className=" flex flex-col gap-4 w-full overflow-scroll" style={{ maxHeight: "30vh" }}>
-                                {
-                                    orders?.map((order) => {
-                                        return <div key={order.product.id} className=" flex flex-row justify-between w-full">
-                                            <p>{order.product.product_name} X {order.quantity}</p>
-                                            <div className=" flex flex-row gap-2">
-                                                <p>{formatCurrency(order.product.amount * order.quantity)}</p>
-                                            </div>
-                                        </div>
-                                    })
+                            {
+                                    transaction?.map((transaction, index) => (
+                                        <div key={index} className=" flex flex-col gap-1"><div>Group order {index + 1}</div>
+                                            {
+                                                transaction.orders.map(order => {
+                                                    return <div key={order.product.id} className=" flex flex-row justify-between w-full">
+                                                        <p>{order.product.product_name} X {order.quantity}</p>
+                                                        <div className=" flex flex-row gap-2">
+                                                            <p>{formatCurrency(order.product.amount * order.quantity)}</p>
+                                                        </div>
+                                                    </div>
+                                                })
+                                            }</div>
+
+                                    ))
                                 }
                             </div>
                             <div>

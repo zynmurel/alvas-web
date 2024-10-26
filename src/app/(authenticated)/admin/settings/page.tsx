@@ -34,6 +34,7 @@ const SettingsPage = () => {
   }, {
     enabled: !!user
   })
+  api.user_customer.account.getBarangays.useQuery()
 
   const onSuccess = ({ description }: { description: string }) => {
     toast({

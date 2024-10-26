@@ -136,30 +136,6 @@ const Page = () => {
           </>
         }
       </CardContent>
-      {
-        transaction.status === "PENDING" && 
-        <AssignRider 
-        riderIsLoading={riderIsLoading} 
-        riders={riders} 
-        searchRider={searchRider} 
-        setSearchRider={setSearchRider}
-        refetchTransaction={refetchTransaction}
-        />
-      }
-      {
-        transaction.status === "ONGOING" && 
-        <CancelOrder
-        riderIsLoading={riderIsLoading} 
-        refetchTransaction={refetchTransaction}
-        />
-      }
-      {
-        transaction.status === "DELIVERED" && 
-        <MarkDoneOrder
-        riderIsLoading={riderIsLoading} 
-        refetchTransaction={refetchTransaction}
-        />
-      }
     </Card> );
   } else {
     return <></>

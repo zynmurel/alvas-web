@@ -57,7 +57,6 @@ export const customerOrderRouter = createTRPCRouter({
                   data : orders
                 } 
               },
-              delivery_fee : settings?.delivery_fee
             }
           })
         }else {

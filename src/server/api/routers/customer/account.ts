@@ -14,6 +14,20 @@ export const customerAccountRouter = createTRPCRouter({
             }
         })
     }),
+    getBarangays : publicProcedure
+    .query( async ({ctx})=>{
+        return await ctx.db.barangays.findMany({
+            orderBy : {
+                barangay_name : 'asc'
+            }
+        }).then((data)=>(
+            data.map((brgy=>({
+                value:brgy.id,
+                label:brgy.barangay_name,
+                delivery_fee:brgy.barangay_delivery_fee,
+            })))
+        ))
+    }),
     updateCustomerInformation: publicProcedure
     .input(z.object({
         id:z.number(),
@@ -23,6 +37,7 @@ export const customerAccountRouter = createTRPCRouter({
         contact_number: z.string(),
         address: z.string(),
         place_description: z.string(),
+        barangayId: z.number(),
     }))
     .mutation( async ({ctx, input : {
         id,
@@ -32,6 +47,7 @@ export const customerAccountRouter = createTRPCRouter({
         contact_number,
         address,
         place_description,
+        barangayId
     }})=>{
         return await ctx.db.customer.update({
             where : {
@@ -44,6 +60,7 @@ export const customerAccountRouter = createTRPCRouter({
                 contact_number,
                 address,
                 place_description,
+                barangayId
             }
         })
     }),

@@ -6,10 +6,11 @@ import { useTransactionContext } from "../../context/transaction";
 import { toast } from "@/components/ui/use-toast";
 interface AssignRider { 
     riderIsLoading : boolean;
-    refetchTransaction: ()=>void
+    refetchTransaction: ()=>void;
+    transactionIds : number[]
+    grouped_delivery_id:number | null;
 }
-const MarkDoneOrder = ({refetchTransaction}:AssignRider) => {
-    const { id } = useParams()
+const MarkDoneOrder = ({refetchTransaction ,transactionIds, grouped_delivery_id}:AssignRider) => {
     const trContext = useTransactionContext()
     const { mutateAsync, isPending } = api.transaction.doneTransaction.useMutation({
         onSuccess : async () => {
@@ -23,7 +24,8 @@ const MarkDoneOrder = ({refetchTransaction}:AssignRider) => {
     })
     const onCancel =async () => {
         await mutateAsync({
-            transaction_id : Number(id)
+            transaction_ids : transactionIds,
+            grouped_delivery_id : grouped_delivery_id||0
         })
     }
     return ( 

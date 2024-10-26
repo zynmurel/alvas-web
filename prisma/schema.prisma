@@ -35,17 +35,18 @@ model admin {
 }
 
 model cashier {
-    id           Int           @id @default(autoincrement())
-    admin_id     Int
-    username     String        @unique
-    password     String
-    first_name   String
-    middle_name  String
-    last_name    String
-    createdAt    DateTime      @default(now())
-    updatedAt    DateTime      @updatedAt
-    transactions transaction[]
-    admin        admin         @relation(fields: [admin_id], references: [id])
+    id            Int           @id @default(autoincrement())
+    admin_id      Int
+    profile_image String?
+    username      String        @unique
+    password      String
+    first_name    String
+    middle_name   String
+    last_name     String
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+    transactions  transaction[]
+    admin         admin         @relation(fields: [admin_id], references: [id])
 }
 
 model products {
@@ -66,7 +67,7 @@ model products {
 
 model product_category {
     id            Int        @id @default(autoincrement())
-    category_name String    @unique
+    category_name String     @unique
     createdAt     DateTime   @default(now())
     updatedAt     DateTime   @updatedAt
     products      products[]
@@ -82,37 +83,51 @@ model orders {
 }
 
 model transaction {
-    id                Int                @id @default(autoincrement())
-    total_amount      Float
-    admin_id          Int
-    cashier_id        Int?
-    delivery_rider_id Int?
-    customer_id       Int?
-    transaction_type  transaction_type
-    status            transaction_status @default(PENDING)
-    delivery_fee      Float?
-    orders            orders[]
-    customer          customer?           @relation(fields: [customer_id], references: [id])
-    admin             admin              @relation(fields: [admin_id], references: [id])
-    cashier           cashier?           @relation(fields: [cashier_id], references: [id])
-    rider             delivery_rider?    @relation(fields: [delivery_rider_id], references: [id])
-    createdAt         DateTime           @default(now())
-    updatedAt         DateTime           @updatedAt
+    id                  Int                @id @default(autoincrement())
+    total_amount        Float
+    admin_id            Int
+    cashier_id          Int?
+    delivery_rider_id   Int?
+    customer_id         Int?
+    grouped_delivery_id Int?
+    transaction_type    transaction_type
+    status              transaction_status @default(PENDING)
+    orders              orders[]
+    customer            customer?          @relation(fields: [customer_id], references: [id])
+    admin               admin              @relation(fields: [admin_id], references: [id])
+    cashier             cashier?           @relation(fields: [cashier_id], references: [id])
+    rider               delivery_rider?    @relation(fields: [delivery_rider_id], references: [id])
+    grouped_delivery    grouped_delivery_by_customer?  @relation(fields: [grouped_delivery_id], references: [id])
+    createdAt           DateTime           @default(now())
+    updatedAt           DateTime           @updatedAt
+}
+
+model grouped_delivery_by_customer {
+    id           Int                @id @default(autoincrement())
+    rider_id     Int
+    delivery_fee Float
+    createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @updatedAt
+    status       transaction_status @default(ONGOING)
+    transactions transaction[]
+    rider        delivery_rider     @relation(fields: [rider_id], references: [id])
 }
 
 model delivery_rider {
-    id             Int           @id @default(autoincrement())
-    admin_id       Int
-    username       String        @unique
-    password       String
-    first_name     String
-    middle_name    String
-    last_name      String
-    contact_number String
-    createdAt      DateTime      @default(now())
-    updatedAt      DateTime      @updatedAt
-    transactions   transaction[]
-    admin          admin         @relation(fields: [admin_id], references: [id])
+    id               Int                @id @default(autoincrement())
+    admin_id         Int
+    profile_image    String?
+    username         String             @unique
+    password         String
+    first_name       String
+    middle_name      String
+    last_name        String
+    contact_number   String
+    createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @updatedAt
+    admin            admin              @relation(fields: [admin_id], references: [id])
+    grouped_delivery grouped_delivery_by_customer[]
+    transactions     transaction[]
 }
 
 model customer {
@@ -122,13 +137,24 @@ model customer {
     first_name        String
     middle_name       String
     last_name         String
+    barangayId        Int
     address           String?
     place_description String?
     contact_number    String          @unique
     status            customer_status @default(REGISTERED)
     transactions      transaction[]
+    barangay          barangays       @relation(fields: [barangayId], references: [id])
     createdAt         DateTime        @default(now())
     updatedAt         DateTime        @updatedAt
+}
+
+model barangays {
+    id                    Int        @id @default(autoincrement())
+    barangay_name         String
+    barangay_delivery_fee Float
+    createdAt             DateTime   @default(now())
+    updatedAt             DateTime   @updatedAt
+    customer              customer[]
 }
 
 model settings {

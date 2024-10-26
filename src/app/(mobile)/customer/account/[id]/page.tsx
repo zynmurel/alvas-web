@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import { Edit } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { Eye, EyeOff } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const UpdateCustomerSchema = z.object({
     first_name: z.string(),
@@ -33,6 +34,7 @@ const UpdateCustomerSchema = z.object({
     contact_number: z.string(),
     address: z.string(),
     place_description: z.string(),
+    barangayId: z.coerce.number()
 })
 const UpdateUsernameSchema = z.object({
     username: z.string(),
@@ -65,6 +67,7 @@ const Page = () => {
     }, {
         enabled: !Number.isNaN(Number(id))
     })
+    const {data:barangays, isLoading:barangaysIsLoading} = api.user_customer.account.getBarangays.useQuery()
     const { mutateAsync, isPending } = api.user_customer.account.updateCustomerInformation.useMutation({
         onSuccess: async () => {
             toast({
@@ -136,6 +139,7 @@ const Page = () => {
             contact_number: account.contact_number || "",
             address: account.address || "",
             place_description: account.place_description || "",
+            barangayId: account.barangayId
         } : undefined
     })
     const form2 = useForm<z.infer<typeof UpdateUsernameSchema>>({
@@ -308,6 +312,30 @@ const Page = () => {
                                                     <Input {...field} placeholder="Input address" className=" text-xs" style={{ marginTop: 0 }} />
                                                 </FormControl>
                                                 <FormMessage className=" absolute -bottom-5" />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        disabled={!isEditPersonalDetails}
+                                        name="barangayId"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Select Barangay</FormLabel>
+                                                <Select onValueChange={field.onChange} value={field.value.toString()} 
+                                        disabled={!isEditPersonalDetails}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select user role to login" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {
+                                                            barangays?.map((brgy)=><SelectItem key={brgy.value} value={brgy.value.toString()}>{brgy.label}</SelectItem>)
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -490,7 +518,7 @@ const Page = () => {
                                                         <FormControl>
                                                             <div className="relative">
                                                                 <Input
-                                                                    type={isConfirmPasswordVisible ? "text" : "password"} 
+                                                                    type={isConfirmPasswordVisible ? "text" : "password"}
                                                                     {...field}
                                                                     placeholder="Input new password"
                                                                     className="text-xs"

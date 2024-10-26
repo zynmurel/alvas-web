@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
             address: string;
             place_description: string;
             contact_number: string;
+            barangayId : number
         }
     })
     try {

@@ -21,6 +21,12 @@ export const customerTransactionRouter = createTRPCRouter({
               product: true
             }
           },
+          customer : {
+            include : {
+              barangay : true
+            }
+          },
+          grouped_delivery : true,
           rider: true
         }
       })

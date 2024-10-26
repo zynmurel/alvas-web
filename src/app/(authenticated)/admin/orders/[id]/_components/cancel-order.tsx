@@ -7,9 +7,10 @@ import { toast } from "@/components/ui/use-toast";
 interface AssignRider { 
     riderIsLoading : boolean;
     refetchTransaction: ()=>void
+    transactionIds : number[]
+    grouped_delivery_id:number | null;
 }
-const CancelOrder = ({refetchTransaction}:AssignRider) => {
-    const { id } = useParams()
+const CancelOrder = ({refetchTransaction, transactionIds, grouped_delivery_id}:AssignRider) => {
     const trContext = useTransactionContext()
     const { mutateAsync, isPending } = api.transaction.cancelTransaction.useMutation({
         onSuccess : async () => {
@@ -22,12 +23,14 @@ const CancelOrder = ({refetchTransaction}:AssignRider) => {
         }
     })
     const onCancel =async () => {
+        console.log(grouped_delivery_id)
         await mutateAsync({
-            transaction_id : Number(id)
+            transaction_ids : transactionIds,
+            grouped_delivery_id : grouped_delivery_id||0
         })
     }
     return ( 
-        <CardFooter className="flex flex-row items-center justify-end border-t bg-muted/50 px-6 py-3">
+        <CardFooter className="flex flex-row items-center justify-end px-6 py-3">
             <Button size={"sm"} onClick={onCancel} variant={"destructive"} disabled={isPending}>Cancel Order</Button>
         </CardFooter> );
 }

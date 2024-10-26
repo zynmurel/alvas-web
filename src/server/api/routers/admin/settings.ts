@@ -63,6 +63,27 @@ export const settingsRouter = createTRPCRouter({
         }
       })
     }),
+    upsertBarangay : publicProcedure
+    .input(z.object({
+      barangay_id:z.number(),
+      barangay_name:z.string(),
+      barangay_delivery_fee:z.number(),
+    }))
+    .mutation(({ctx, input:{barangay_id, barangay_name,barangay_delivery_fee}})=>{
+      return ctx.db.barangays.upsert({
+        where : {
+          id:barangay_id
+        },
+        create:{
+          barangay_name,
+          barangay_delivery_fee
+        },
+        update:{
+          barangay_name,
+          barangay_delivery_fee
+        },
+      })
+    }),
     updateDefaultPassForStaff : publicProcedure
     .input(z.object({
       admin_id:z.number(),

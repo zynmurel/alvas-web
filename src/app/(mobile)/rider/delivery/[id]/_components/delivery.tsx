@@ -29,7 +29,7 @@ const ForDelivery = () => {
         <div className=" flex flex-col overflow-y-auto" style={{ maxHeight: "90vh" }}>
             {
                 data?.map((delivery) => {
-                    const customer = delivery.customer
+                    const customer = delivery.transactions[0]?.customer
                     return <div onClick={() => setSelectedTransaction(delivery)} key={delivery.id} className=" p-2 px-4 rounded text-xs flex items-center flex-row border-b">
                         <div>
                             <div className=" font-semibold text-muted-foreground">{customer ? `${customer.first_name} ${customer.middle_name ? customer.middle_name[0] + "." : ""} ${customer.last_name}` : ""}</div>
@@ -38,7 +38,7 @@ const ForDelivery = () => {
 
                         <div className=" flex flex-col items-end flex-1">
                             <div className=" font-semibold text-muted-foreground">{format(delivery.createdAt, "P hh:mm aa")}</div>
-                            <div className=" font-bold text-sm">{formatCurrency(delivery.total_amount + (delivery.delivery_fee || 0))}</div>
+                            <div className=" font-bold text-sm">{formatCurrency(delivery.transactions.reduce((a, c)=>a+c.total_amount,0) + (delivery.delivery_fee || 0))}</div>
                         </div>
                     </div>
                 })

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { formatCurrency } from "@/app/_utils/format"
 import {
     Table,
@@ -30,7 +31,7 @@ export default function CancelledTable({ transactions, setSelectedTransaction }:
                         <TableRow onClick={() => setSelectedTransaction(transaction)} key={transaction.id} className=" py-5">
                             <TableCell className="font-medium">{format(transaction.createdAt, "P hh:mm aa")}</TableCell>
                             <TableCell className=" text-xs"><BadgeStatus status={transaction.status} /></TableCell>
-                            <TableCell className="text-right">{formatCurrency(transaction.total_amount + (transaction?.delivery_fee||0))}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(transaction.total_amount + (transaction?.group_delivery?.delivery_fee||0))}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
