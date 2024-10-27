@@ -57,9 +57,9 @@ export const transactionRouter = createTRPCRouter({
         }
       }).then((transactions) => {
         transactions.forEach((transaction) => {
-          const findData = data[transaction.customer_id + transaction.status]
-          data[transaction.customer_id + transaction.status] = {
-            id: transaction.customer_id + transaction.status,
+          const findData = data[transaction.customer_id + transaction.status + transaction.grouped_delivery_id||"" ]
+          data[transaction.customer_id + transaction.status + transaction.grouped_delivery_id||"" ] = {
+            id: transaction.customer_id + transaction.status + transaction.grouped_delivery_id||"" ,
             status: transaction.status,
             rider: transaction.rider,
             grouped_delivery_id: transaction.grouped_delivery_id || null,

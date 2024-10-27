@@ -1,145 +1,187 @@
 import { Button } from "@/components/ui/button";
 import { CardFooter } from "@/components/ui/card";
 import { Command } from "@/components/ui/command";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretSortIcon } from "@radix-ui/react-icons";
-import { CheckIcon, LoaderCircle, Truck } from "lucide-react";
+import { CheckIcon, LoaderCircle, Search, Truck } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useTransactionContext } from "../../context/transaction";
-interface AssignRider { 
-    riders:{
+import { useState } from "react";
+import { PopoverClose } from "@radix-ui/react-popover";
+interface AssignRider {
+  riders:
+    | {
         label: string;
         value: number;
-    }[] | undefined;
-    searchRider:string;
-    setSearchRider:(text:string)=>void 
-    riderIsLoading : boolean;
-    refetchTransaction: ()=>void;
-    transactionIds : number[]
-    delivery_fee:number
+        barangay: string;
+        isOngoing: boolean;
+        deliveryCount: number;
+      }[]
+    | undefined;
+  searchRider: string;
+  setSearchRider: (text: string) => void;
+  riderIsLoading: boolean;
+  refetchTransaction: () => void;
+  transactionIds: number[];
+  delivery_fee: number;
+  barangay: string;
 }
 
 const AssignRiderForm = z.object({
-    rider_id: z.number().nullish(),
+  rider_id: z.number().nullish(),
 });
 
-const AssignRider = ({riders, searchRider, transactionIds, delivery_fee, setSearchRider, riderIsLoading, refetchTransaction}:AssignRider) => {
-    const trContext = useTransactionContext()
-    const form = useForm<z.infer<typeof AssignRiderForm>>({
-        resolver: zodResolver(AssignRiderForm),
-    });
+const AssignRider = ({
+  riders,
+  searchRider,
+  transactionIds,
+  delivery_fee,
+  setSearchRider,
+  riderIsLoading,
+  refetchTransaction,
+  barangay,
+}: AssignRider) => {
+  const form = useForm<z.infer<typeof AssignRiderForm>>({
+    resolver: zodResolver(AssignRiderForm),
+  });
+  const { isRefetching } = api.rider.getRiderForSelect.useQuery();
+  const {
+    mutateAsync: assignRiderToTransaction,
+    isPending: assignRiderToTransactionIsPending,
+  } = api.transaction.assignRiderToTransaction.useMutation({
+    onSuccess: async () => {
+      await Promise.all([refetchTransaction()]);
+      toast({
+        title: "Success",
+        description:
+          "Rider assigned successfully. Transaction moved to ongoing.",
+      });
+    },
+  });
 
-    const { mutateAsync:assignRiderToTransaction, isPending:assignRiderToTransactionIsPending } = api.transaction.assignRiderToTransaction.useMutation({
-        onSuccess :async () => {
-            refetchTransaction()
-            await trContext?.refetchTransaction()
-            toast({
-                title : "Success",
-                "description" : "Rider assigned successfully. Transaction moved to ongoing."
-            })
-        }
-    })
-
-    const onSubmit = async(data: z.infer<typeof AssignRiderForm>) => {
-        if(!!data.rider_id){
-            await assignRiderToTransaction({
-                rider_id : data.rider_id,
-                transaction_ids:transactionIds,
-                delivery_fee : delivery_fee
-            })
-        } else {
-            form.setError("rider_id", { message : "Rider is required"})
-        }
-    }
-    const onSelectRider = (rider_id: number) => {
-      if (form.getValues("rider_id") === rider_id) {
+  const onSubmit = async (riderId: number) => {
+    if (!!riderId) {
+      if (form.getValues("rider_id") === riderId) {
         form.setValue("rider_id", null);
       } else {
-        form.setValue("rider_id", rider_id);
+        form.setValue("rider_id", riderId);
         form.clearErrors("rider_id");
       }
-    };
+      await assignRiderToTransaction({
+        rider_id: riderId,
+        transaction_ids: transactionIds,
+        delivery_fee: delivery_fee,
+      });
+    } else {
+      form.setError("rider_id", { message: "Rider is required" });
+    }
+  };
 
-    return (
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className=" w-full flex flex-row items-center gap-3 justify-center"
-                >
-                    <FormField
-                        control={form.control}
-                        name="rider_id"
-                        render={({ field }) => (
-                            <FormItem className="relative flex flex-col w-[200px] mt-1">
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <FormControl>
-                                            <Button
-                                                variant="outline"
-                                                role="combobox"
-                                                className={cn(
-                                                    "pl-3 text-left font-normal flex justify-between overflow-hidden",
-                                                    !field.value && "text-muted-foreground"
-                                                )}
-                                            >
-                                                {field.value
-                                                    ? riders?.find((rider) => rider.value === field.value)
-                                                        ?.label
-                                                    : "Select rider"}
-                                                <CaretSortIcon className="w-4 h-4 opacity-50 shrink-0" />
-                                            </Button>
-                                        </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-[250px] p-0">
-                                        <Command>
-                                            <Input
-                                                value={searchRider}
-                                                onChange={(e) => setSearchRider(e.target.value)}
-                                                placeholder="Search account number or name"
-                                                className="w-auto m-1 border-none h-9 max-w-[100]"
-                                            />
-                                            {/* <CommandEmpty>No Agent Found</CommandEmpty> */}
-                                            <div className="p-1">
-                                                {riderIsLoading ? <div className=" w-full flex items-center justify-center"><LoaderCircle className=" animate-spin"/></div> : 
-                                                riders?.map((rider) => (
-                                                    <div
-                                                        className={`flex flex-row items-center px-2 py-1.5 text-sm font-light rounded cursor-pointer hover:bg-gray-100 ${rider.value === field.value && "bg-gray-100"
-                                                            }`}
-                                                        key={rider.value}
-                                                        onClick={() => onSelectRider(rider.value)}
-                                                    >
-                                                        {rider.label}
-                                                        <CheckIcon
-                                                            className={cn(
-                                                                "ml-auto h-4 w-4",
-                                                                rider.value === field.value
-                                                                    ? "opacity-100"
-                                                                    : "opacity-0"
-                                                            )}
-                                                        />
-                                                    </div>
-                                                ))}
-                                                
-                                            </div>
-                                        </Command>
-                                    </PopoverContent>
-                                </Popover>
-                                <FormMessage className="absolute -bottom-4" />
-                            </FormItem>
-                        )}
+  return (
+    <Form {...form}>
+      <form onSubmit={() => {}} className="">
+        <FormField
+          control={form.control}
+          name="rider_id"
+          render={({ field }) => (
+            <FormItem className="relative flex flex-col">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      disabled={
+                        assignRiderToTransactionIsPending || isRefetching
+                      }
+                      size={"sm"}
+                      className="flex flex-row items-center gap-1 self-end"
+                    >
+                      <Truck size={15} />
+                      Assign
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="relative w-[450px] p-0">
+                  {isRefetching ||
+                    (assignRiderToTransactionIsPending && (
+                      <div className="absolute bottom-0 left-0 right-0 top-0 z-30 flex items-center justify-center bg-white opacity-50">
+                        <LoaderCircle className="animate-spin" />
+                      </div>
+                    ))}
+                  <Command>
+                    <div className="flex flex-row items-center gap-1 px-3 pt-2 text-base font-bold">
+                      <Truck size={18} strokeWidth={3} />
+                      Riders
+                    </div>
+                    <Input
+                      value={searchRider}
+                      onChange={(e) => setSearchRider(e.target.value)}
+                      placeholder="Search rider name"
+                      className="m-2 mx-3 h-9 w-auto max-w-[100] border-none"
                     />
-                    <Button disabled={assignRiderToTransactionIsPending} size={"sm"} className=" flex flex-row items-center gap-1 self-end"><Truck size={15} />Assign</Button>
-                </form>
-            </Form>
-    );
-}
+                    {/* <CommandEmpty>No Agent Found</CommandEmpty> */}
+                    <div className="flex flex-col gap-1 p-2 px-3 pt-0">
+                      {riderIsLoading ? (
+                        <div className="flex w-full items-center justify-center">
+                          <LoaderCircle className="animate-spin" />
+                        </div>
+                      ) : (
+                        riders?.map((rider) => {
+                          const buttonIsEnabled = rider.barangay === barangay;
+                          return (
+                            <PopoverClose
+                              className={`flex flex-row items-center rounded px-2 py-1.5 text-sm font-semibold ${
+                                !rider.isOngoing || buttonIsEnabled
+                                  ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                                  : "cursor-not-allowed bg-slate-50 text-muted-foreground dark:bg-secondary"
+                              }`}
+                              key={rider.value}
+                              onClick={() => onSubmit(rider.value)}
+                            >
+                              <div className="flex w-full flex-row items-center justify-between">
+                                <div>
+                                  {rider.label}{" "}
+                                  {rider.isOngoing && `(in ${rider.barangay})`}
+                                </div>
+                                <div
+                                  className={`rounded-xl p-1 px-2 text-xs text-white ${rider.isOngoing ? "bg-blue-500" : "bg-green-500"}`}
+                                >
+                                  {rider.isOngoing ? "Ongoing" : "Available"}
+                                </div>
+                              </div>
+                            </PopoverClose>
+                          );
+                        })
+                      )}
+                    </div>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <FormMessage className="absolute -bottom-4" />
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
+  );
+};
 
 export default AssignRider;

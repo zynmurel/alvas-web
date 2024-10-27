@@ -1,6 +1,5 @@
-
-import * as React from "react"
-import { Button } from "@/components/ui/button"
+import * as React from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,60 +8,77 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import { Transaction } from "../page";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { BadgeStatus } from "@/app/(mobile)/customer/basket/_components/badger";
 import { format } from "date-fns-tz";
 import { timeDate, timeZone } from "@/app/helper/format";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/app/_utils/format";
-const OpenShowTransaction = ({ transaction, setTransaction }: {
+import { api } from "@/trpc/react";
+const OpenShowTransaction = ({
+  transaction,
+  setTransaction,
+}: {
   transaction: Transaction | undefined;
   setTransaction: React.Dispatch<React.SetStateAction<Transaction | undefined>>;
 }) => {
   if (!transaction) {
-    return <></>
+    return <></>;
   }
-  const boholTimeDate = timeDate(transaction.createdAt)
+  const boholTimeDate = timeDate(transaction.createdAt);
   return (
     <Dialog open={!!transaction} onOpenChange={() => setTransaction(undefined)}>
-      <DialogContent className="">
+      <DialogContent className="p-0">
         <Card
-          className="overflow-hidden" x-chunk="dashboard-05-chunk-4"
+          className="overflow-hidden border-none"
+          x-chunk="dashboard-05-chunk-4"
         >
           <CardHeader className="flex flex-row items-start bg-muted/50">
-            <div className="grid gap-0.5 w-full">
-              <CardTitle className=" flex items-center gap-2 text-lg w-full justify-between">
+            <div className="grid w-full gap-0.5">
+              <CardTitle className="flex w-full items-center justify-between gap-2 text-lg">
                 Order <BadgeStatus status={transaction.status} />
               </CardTitle>
-              <CardDescription>Date: {format(boholTimeDate, "PPP", { timeZone: timeZone })}</CardDescription>
+              <CardDescription>
+                Date: {format(boholTimeDate, "PPP", { timeZone: timeZone })}
+              </CardDescription>
             </div>
           </CardHeader>
-          <CardContent className="p-6 text-sm pt-2">
+          <CardContent className="p-6 pt-2 text-sm">
             <div className="grid gap-3">
               <div className="font-semibold">Order Details</div>
-              <ul className="grid gap-3 max-h-40 overflow-auto">
-                {
-                  transaction.transactions.map((transact, index) => {
-                    return <div key={index}>
-                      <div className=" flex flex-row justify-between font-bold">
-                      <div>Transaction {index + 1}</div>
-                      <div className=" font-normal text-slate-500">{format(transact.createdAt, "P hh:mm aa")}</div>
+              <ul className="grid max-h-40 gap-3 overflow-auto">
+                {transaction.transactions.map((transact, index) => {
+                  return (
+                    <div key={index}>
+                      <div className="flex flex-row justify-between font-bold">
+                        <div>Basket {index + 1}</div>
+                        <div className="font-normal text-slate-500">
+                          {format(transact.createdAt, "P hh:mm aa")}
+                        </div>
                       </div>
-                      {
-                        transact?.orders.map((order, index) => (
-                          <li className="flex items-center justify-between" key={index}>
-                            <span className="text-muted-foreground">
-                              {order.product.product_name} x <span>{order.quantity}</span>
-                            </span>
-                            <span>{formatCurrency(order.product.amount)}</span>
-                          </li>
-                        ))
-                      }
+                      {transact?.orders.map((order, index) => (
+                        <li
+                          className="flex items-center justify-between"
+                          key={index}
+                        >
+                          <span className="text-muted-foreground">
+                            {order.product.product_name} x{" "}
+                            <span>{order.quantity}</span>
+                          </span>
+                          <span>{formatCurrency(order.product.amount)}</span>
+                        </li>
+                      ))}
                     </div>
-                  })
-                }
+                  );
+                })}
               </ul>
               <Separator className="my-2" />
               <ul className="grid gap-3">
@@ -76,7 +92,11 @@ const OpenShowTransaction = ({ transaction, setTransaction }: {
                 </li>
                 <li className="flex items-center justify-between font-semibold">
                   <span className="text-muted-foreground">Total</span>
-                  <span>{formatCurrency(transaction.sub_total + transaction.delivery_fee)}</span>
+                  <span>
+                    {formatCurrency(
+                      transaction.sub_total + transaction.delivery_fee,
+                    )}
+                  </span>
                 </li>
               </ul>
             </div>
@@ -96,8 +116,7 @@ const OpenShowTransaction = ({ transaction, setTransaction }: {
                 </div>
               </dl>
             </div>
-            {
-              transaction.rider && transaction.status !== "PENDING" &&
+            {transaction.rider && transaction.status !== "PENDING" && (
               <>
                 <Separator className="my-4" />
                 <div className="grid gap-3">
@@ -116,15 +135,21 @@ const OpenShowTransaction = ({ transaction, setTransaction }: {
                   </dl>
                 </div>
               </>
-            }
+            )}
+            <div className="flex justify-end px-0 pt-5">
+              <Button
+                onClick={() => setTransaction(undefined)}
+                type="button"
+                variant={"outline"}
+              >
+                Close
+              </Button>
+            </div>
           </CardContent>
-          
         </Card>
-        <DialogFooter>
-          <Button type="button" variant={"outline"}>Close</Button>
-        </DialogFooter>
       </DialogContent>
-    </Dialog>);
-}
+    </Dialog>
+  );
+};
 
 export default OpenShowTransaction;
