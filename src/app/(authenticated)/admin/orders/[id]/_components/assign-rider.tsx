@@ -146,7 +146,7 @@ const AssignRider = ({
                       ) : (
                         riders?.map((rider) => {
                           const buttonIsEnabled = rider.barangay === barangay;
-                          return (
+                          return buttonIsEnabled || !rider.isOngoing ? (
                             <PopoverClose
                               className={`flex flex-row items-center rounded px-2 py-1.5 text-sm font-semibold ${
                                 !rider.isOngoing || buttonIsEnabled
@@ -157,7 +157,10 @@ const AssignRider = ({
                               onClick={() => onSubmit(rider.value)}
                             >
                               <div className="flex w-full flex-row items-center justify-between">
-                                <div>
+                                <div className="flex flex-row items-center">
+                                  <p className="mr-2 flex items-center justify-center rounded-full bg-slate-200 p-1 px-2 text-xs text-slate-600">
+                                    {rider.deliveryCount} Delivered
+                                  </p>
                                   {rider.label}{" "}
                                   {rider.isOngoing && `(in ${rider.barangay})`}
                                 </div>
@@ -168,6 +171,30 @@ const AssignRider = ({
                                 </div>
                               </div>
                             </PopoverClose>
+                          ) : (
+                            <div
+                              className={`flex flex-row items-center rounded px-2 py-1.5 text-sm font-semibold ${
+                                !rider.isOngoing || buttonIsEnabled
+                                  ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                                  : "cursor-not-allowed bg-slate-50 text-muted-foreground dark:bg-secondary"
+                              }`}
+                              key={rider.value}
+                            >
+                              <div className="flex w-full flex-row items-center justify-between">
+                                <div className="flex flex-row items-center">
+                                  <p className="mr-2 flex items-center justify-center rounded-full bg-slate-200 p-1 px-2 text-xs text-slate-600">
+                                    {rider.deliveryCount} Delivered
+                                  </p>
+                                  {rider.label}{" "}
+                                  {rider.isOngoing && `(in ${rider.barangay})`}
+                                </div>
+                                <div
+                                  className={`rounded-xl p-1 px-2 text-xs text-white ${rider.isOngoing ? "bg-blue-500" : "bg-green-500"}`}
+                                >
+                                  {rider.isOngoing ? "Ongoing" : "Available"}
+                                </div>
+                              </div>
+                            </div>
                           );
                         })
                       )}

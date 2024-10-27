@@ -367,25 +367,6 @@ const Page = () => {
                   <FormField
                     control={form.control}
                     disabled={!isEditPersonalDetails}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem className="relative">
-                        <FormLabel className="">Address</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Input address"
-                            className="text-xs"
-                            style={{ marginTop: 0 }}
-                          />
-                        </FormControl>
-                        <FormMessage className="absolute -bottom-5" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    disabled={!isEditPersonalDetails}
                     name="barangayId"
                     render={({ field }) => (
                       <FormItem>
@@ -412,6 +393,25 @@ const Page = () => {
                           </SelectContent>
                         </Select>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    disabled={!isEditPersonalDetails}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem className="relative">
+                        <FormLabel className="">Purok or Street</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Input purok or street"
+                            className="text-xs"
+                            style={{ marginTop: 0 }}
+                          />
+                        </FormControl>
+                        <FormMessage className="absolute -bottom-5" />
                       </FormItem>
                     )}
                   />

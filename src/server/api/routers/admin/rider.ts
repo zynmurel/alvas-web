@@ -146,6 +146,8 @@ export const riderRouter = createTRPCRouter({
                 isOngoing:rider.grouped_delivery.length>0,
                 deliveryCount:rider._count.grouped_delivery
             })}).sort((a, b)=>{
+                return (a.deliveryCount) - (b.deliveryCount)
+            }).sort((a, b)=>{
                 const toNumber = (data:boolean )=>data?1:0
                 return toNumber(a.isOngoing) - toNumber(b.isOngoing)
             })
