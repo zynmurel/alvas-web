@@ -18,7 +18,7 @@ import { z } from "zod"
 const UpsertBarangaySchema = z.object({
   barangay_name: z.string().min(2, { message: "Barangay should be atleast 2 characters." }),
   barangay_id: z.number(),
-  barangay_delivery_fee: z.coerce.number(),
+  barangay_delivery_fee: z.coerce.number().min(0),
 })
 export default function UpsertBarangay({ open, setOpen }: { open: undefined | number; setOpen: Dispatch<SetStateAction<number | undefined>> }) {
 
