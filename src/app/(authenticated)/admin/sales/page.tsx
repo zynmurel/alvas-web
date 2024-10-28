@@ -141,7 +141,6 @@ const Staffs = () => {
       });
     }
   }, [date]);
-
   return (
     <div className="flex w-full flex-col rounded bg-background p-5 shadow">
       <div className="mb-2 font-bold">Filter Sales</div>
@@ -240,7 +239,30 @@ const Staffs = () => {
           </div>
           <CSVLink
             className="flex w-[150px] flex-row justify-center rounded bg-primary p-5 py-2 text-sm text-white shadow"
-            data={sales}
+            data={[
+              ...sales,
+              {
+                category: "Total Sale",
+                product_name: "",
+                total_sales: sales.reduce(
+                  (arr, curr) => arr + curr.total_sales,
+                  0,
+                ),
+              },
+            ].map((sale) => {
+              if (showBy === "CATEGORY") {
+                return {
+                  Category: sale.category,
+                  Sale: sale.total_sales,
+                };
+              } else {
+                return {
+                  Category: sale.category,
+                  ["Product name"]: sale.product_name,
+                  Sale: sale.total_sales,
+                };
+              }
+            })}
           >
             Download CSV
           </CSVLink>
