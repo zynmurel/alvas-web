@@ -8,10 +8,14 @@ export const salesRouter = createTRPCRouter({
     from:z.date(),
     to:z.date(),
   }))
-  .query(({ ctx }) => {
+  .query(({ ctx , input:{from, to}}) => {
     return ctx.db.transaction.findMany({
         where : {
-          status : "DONE"
+          status : "DONE",
+          createdAt:{
+            gte:from,
+            lte:to
+          }
         },
         include : {
           orders : {
