@@ -77,34 +77,6 @@ const SettingsPage = () => {
   return (
     <div className="grid gap-6">
       <UpsertBarangay open={openAddBarangay} setOpen={setOpenAddBarangay}/>
-      <Card x-chunk="dashboard-04-chunk-1">
-        <CardHeader>
-          <CardTitle>Rider Settings</CardTitle>
-          <CardDescription>
-            {"Setting default delivery fee for rider."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className=" text-sm text-gray-800">Delivery Fee</div>
-          <Input type="number" defaultValue={delivery_fee} onChange={(e) => setDeliveryFee(Number(e.target.value))} placeholder="Delivery fee" />
-        </CardContent>
-        <CardFooter className="border-t px-6 py-4 flex justify-end">
-          <Button
-            disabled={!delivery_fee || delivery_fee < 1 || updateDeliveryFeeIsPending}
-            onClick={() => {
-              if (delivery_fee && delivery_fee >= 1) {
-                updateDeliveryFee({ delivery_fee, admin_id: Number(user?.id) })
-              } else {
-                toast({
-                  variant: "destructive",
-                  title: "Invalid delivery fee",
-                  description: "Password should not be 0 or below"
-                })
-              }
-            }}
-          >Save</Button>
-        </CardFooter>
-      </Card>
 
 
       <Card x-chunk="dashboard-04-chunk-1">
