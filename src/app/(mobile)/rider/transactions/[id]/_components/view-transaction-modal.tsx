@@ -28,42 +28,19 @@ export function ViewTransactionModal({ open, setOpen }: {
             setOpen(undefined)
         }
     }
-    const {  refetch } = api.user_customer.transaction.getCustomerTransactions.useQuery({
-        customer_id: Number(id),
-    }, {
-        enabled : false
-    })
-
-    const { mutateAsync, isPending } = api.user_customer.transaction.cancelTransaction.useMutation({
-        onSuccess:async()=>{
-            toast({
-                title:"Cancelled",
-                description: "Transaction Cancelled"
-            })
-            setOpen(undefined)
-            await refetch()
-        },
-        onError : (e) =>{
-          toast({
-            variant:"destructive",
-            title:"Failed",
-            description:e.message
-          })
-        }
-    })
     if (!open) return <></>
 
     const totalAmount = open.transactions.reduce((arr, curr) => {
         return arr + curr.orders.reduce((a,c)=>(a+(c.product.amount*c.quantity)),0)
     }, 0)
     const transaction = open?.transactions || []
-    const onCancel = async (id: number | undefined) => {
-        if (id) {
-            await mutateAsync({
-                transaction_id: id
-            })
-        }
-    }
+    // const onCancel = async (id: number | undefined) => {
+    //     if (id) {
+    //         await mutateAsync({
+    //             transaction_id: id
+    //         })
+    //     }
+    // }
     return (
         <Dialog open={!!open} onOpenChange={setOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
@@ -85,7 +62,7 @@ export function ViewTransactionModal({ open, setOpen }: {
                             <div className=" flex flex-col gap-4 w-full overflow-scroll" style={{ maxHeight: "30vh" }}>
                             {
                                     transaction?.map((transaction, index) => (
-                                        <div key={index} className=" flex flex-col gap-1"><div>Group order {index + 1}</div>
+                                        <div key={index} className=" flex flex-col gap-1 font-bold"><div>Basket {index + 1}</div>
                                             {
                                                 transaction.orders.map(order => {
                                                     return <div key={order.product.id} className=" flex flex-row justify-between w-full">
@@ -134,7 +111,7 @@ export function ViewTransactionModal({ open, setOpen }: {
                                 </div>}
                                 <div className=" flex flex-row justify-end gap-2 w-full mt-5">
                                     <Button onClick={() => setOpen(undefined)} variant={"outline"}>Close</Button>
-                                    {open.status === "PENDING" && <Button disabled={isPending} onClick={() => onCancel(open?.id)} variant={"destructive"} className="">Cancel Order</Button>}
+                                    {/* {open.status === "PENDING" && <Button disabled={isPending} onClick={() => onCancel(open?.id)} variant={"destructive"} className="">Cancel Order</Button>} */}
                                 </div>
                             </div>
                         </div>

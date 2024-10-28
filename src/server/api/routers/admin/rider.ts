@@ -112,7 +112,8 @@ export const riderRouter = createTRPCRouter({
                                 createdAt:{
                                     gte:startOfDay(new Date()),
                                     lte:endOfDay(new Date())
-                                }
+                                },
+                                OR : [{status:"DELIVERED"},{status:"ONGOING"},{status:"DONE"}]
                             },
                         }
                     }

@@ -76,8 +76,10 @@ export default function OrderModal({ open, setOpen }: {
         id: Number(id),
     }, { enabled: false })
     const refetchOrders = async () => {
-        await refetchForDelivery()
-        await refetchDelivered()
+        await Promise.all([
+            refetchForDelivery(),
+            refetchDelivered()
+        ])
     }
     if (!open) return <></>
 
@@ -89,7 +91,7 @@ export default function OrderModal({ open, setOpen }: {
     const onCancel = async () => {
         if (open.id) {
             await cancelOrder({
-                transaction_id: open.id
+                id: open.id
             })
         }
     }
@@ -97,7 +99,7 @@ export default function OrderModal({ open, setOpen }: {
     const onDelivered = async () => {
         if (open.id) {
             await orderDelivered({
-                transaction_id: open.id
+                id: open.id
             })
         }
     }
@@ -122,7 +124,7 @@ export default function OrderModal({ open, setOpen }: {
                             <div className=" flex flex-col gap-4 w-full overflow-scroll" style={{ maxHeight: "30vh" }}>
                                 {
                                     transaction?.map((transaction, index) => (
-                                        <div key={index} className=" flex flex-col gap-1"><div>Group order {index + 1}</div>
+                                        <div key={index} className=" flex flex-col gap-1"><div>Basket {index + 1}</div>
                                             {
                                                 transaction.orders.map(order => {
                                                     return <div key={order.product.id} className=" flex flex-row justify-between w-full">

@@ -59,32 +59,54 @@ export const riderDeliveryRouter = createTRPCRouter({
     }),
   cancelTransaction: publicProcedure
     .input(z.object({
-      transaction_id: z.number()
+      id: z.number()
     }))
-    .mutation(async ({ ctx, input: { transaction_id } }) => {
-      return ctx.db.transaction.update({
+    .mutation(async ({ ctx, input: { id } }) => {
+      const updateTransaction = await ctx.db.transaction.updateMany({
+        where : {
+          grouped_delivery_id : id
+        },data: {
+          status: "CANCELLED"
+        }
+      })
+      const updateGroupTransaction = await ctx.db.grouped_delivery_by_customer.update({
         where: {
-          id: transaction_id,
+          id: id,
           status: "ONGOING"
         },
         data: {
           status: "CANCELLED"
         }
       })
+      return await Promise.all([
+        updateGroupTransaction,
+        updateTransaction
+      ])
     }),
   transactionDelivered: publicProcedure
     .input(z.object({
-      transaction_id: z.number()
+      id: z.number()
     }))
-    .mutation(async ({ ctx, input: { transaction_id } }) => {
-      return ctx.db.transaction.update({
+    .mutation(async ({ ctx, input: { id } }) => {
+      const updateTransaction = await ctx.db.transaction.updateMany({
+        where : {
+          grouped_delivery_id : id
+        },data: {
+          status: "DELIVERED"
+        }
+      })
+      const updateGroupTransaction = await ctx.db.grouped_delivery_by_customer.update({
         where: {
-          id: transaction_id,
+          id: id,
           status: "ONGOING"
         },
         data: {
           status: "DELIVERED"
         }
       })
+      return await Promise.all([
+        updateGroupTransaction,
+        updateTransaction
+      ])
     }),
 });

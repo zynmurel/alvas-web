@@ -9,18 +9,32 @@ import { useState } from "react"
 import { useParams } from "next/navigation"
 import PendingTables from "./_components/pendings-table"
 import { ViewTransactionModal } from "./_components/view-transaction-modal"
-import { barangays, customer, grouped_delivery_by_customer, type delivery_rider, type orders, type products, type transaction } from "@prisma/client"
+import { $Enums, barangays, customer, grouped_delivery_by_customer, type delivery_rider, type orders, type products, type transaction } from "@prisma/client"
 import DoneTable from "./_components/done-table"
 import CancelledTable from "./_components/cancelled-table"
+import { LoaderCircle } from "lucide-react"
 
 const statuses = ["ONGOING", "DONE", "CANCELLED"] as ("ONGOING"| "DONE"| "CANCELLED")[]
 
-export type TransactionType = (transaction & {
-    orders : (orders & {product : products})[];
-    rider : delivery_rider | null;
-    group_delivery? : grouped_delivery_by_customer;
-    customer?: customer& { barangay:barangays}| null;
-})
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export type TransactionType = {
+    id: string;
+    status: $Enums.transaction_status;
+    customer_name: string;
+    customer_contact?: string;
+    sub_total: number;
+    delivery_fee: number;
+    total_amount: number;
+    total_transactions: number;
+    createdAt: Date;
+    barangay: string;
+    transactions: (transaction & {
+      orders: (orders & { product: products })[];
+      customer?: (customer & { barangay: barangays }) | null
+    })[];
+    rider: delivery_rider | null;
+    grouped_delivery_id:number|null
+  }
 
 const Page = () => {
     const {id} = useParams()
@@ -28,7 +42,7 @@ const Page = () => {
     const [selectedTransaction ,setSelectedTransaction] = useState<TransactionType | undefined>(undefined)
     const [transactions, setTransactions] = useState<TransactionType[]>([])
 
-    const { data, isLoading} = api.user_customer.transaction.getCustomerTransactions.useQuery({
+    const { data, isLoading, refetch, isRefetching} = api.user_customer.transaction.getCustomerTransactions.useQuery({
         customer_id: Number(id),
     }, {
         enabled : !Number.isNaN(Number(id))
@@ -59,6 +73,7 @@ const Page = () => {
                     <p className="text-muted-foreground text-xs">View your ongoing orders and records.</p>
                 </div>
                 <div>
+                    <div className=" items-center justify-center p-1 text-sm font-medium bg-gray-100 rounded px-3" onClick={async()=>await refetch()}>{isRefetching? <LoaderCircle size={20} className=" animate-spin"/>:"Refresh"}</div>
                 </div>
             </div>
             <div className="flex flex-1 flex-col gap-4 md:gap-8">

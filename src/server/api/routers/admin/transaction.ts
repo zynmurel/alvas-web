@@ -34,9 +34,6 @@ export const transactionRouter = createTRPCRouter({
         where: {
           admin_id,
           transaction_type: "DELIVERY",
-          customer_id: {
-            not: null
-          }
         },
         include: {
           rider: true,
@@ -69,7 +66,7 @@ export const transactionRouter = createTRPCRouter({
             customer_name: `${transaction.customer?.first_name} ${transaction.customer?.middle_name[0]}. ${transaction.customer?.last_name}`,
             customer_contact: transaction.customer?.contact_number,
             sub_total: (findData?.sub_total || 0) + transaction.total_amount,
-            delivery_fee: transaction.customer?.barangay.barangay_delivery_fee || 0,
+            delivery_fee: transaction.grouped_delivery?.delivery_fee || transaction.customer?.barangay.barangay_delivery_fee || 0,
             total_amount: (transaction.customer?.barangay.barangay_delivery_fee || 0) + (findData?.sub_total || 0) + transaction.total_amount,
             total_transactions: (findData?.total_transactions || 0) + 1
           }

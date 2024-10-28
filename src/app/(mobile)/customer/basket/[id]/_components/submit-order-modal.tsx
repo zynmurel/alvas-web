@@ -50,8 +50,8 @@ export function SubmitOrderModal({ open, setOpen, products, setProducts, setting
     })
 
     if (!open) return <></>
-
     const totalAmount = products.reduce((arr, curr) => {
+        console.log("2",arr , curr.amount * curr.quantity)
         return arr + (curr.amount * curr.quantity)
     }, 0)
 
