@@ -27,10 +27,10 @@ export const cashierTransactionRouter = createTRPCRouter({
                     include : {
                         product : {
                             select : {
-                                amount : true,
                                 product_name : true
                             }
-                        }
+                        },
+                        product_price : true
                     }
                 }
             }

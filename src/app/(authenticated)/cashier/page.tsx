@@ -18,7 +18,7 @@ import { api } from "@/trpc/react"
 import Loading from "./_components/loading"
 import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { type $Enums } from "@prisma/client"
+import { product_price_history, type $Enums } from "@prisma/client"
 import { Separator } from "@/components/ui/separator"
 import { MoreVertical } from "lucide-react"
 import { AddOrderModal } from "./_components/add-order-modal"
@@ -43,7 +43,7 @@ export type ProductType ={
     admin_id: number;
     category_id: number;
     quantity : number;
-    amount: number;
+    price_history : product_price_history[];
     status: $Enums.product_status;
     createdAt: Date;
     updatedAt: Date;
@@ -75,7 +75,7 @@ const Page = () => {
     }
 
     const totalAmount = selectedProducts.reduce((arr, curr)=>{
-        return arr + (curr.amount * curr.quantity)
+        return arr + ((curr.price_history[0]?.price||0) * curr.quantity)
     },0)
 
 
@@ -180,7 +180,7 @@ const Page = () => {
                                             selectedProducts?.map((product)=>{
                                                 return <div key={product.id} className=" flex flex-row justify-between w-full">
                                                     <p>{product.product_name} X {product.quantity}</p>
-                                                    <p>{formatCurrency(product.amount * product.quantity)}</p>
+                                                    <p>{formatCurrency((product.price_history[0]?.price||0 )* product.quantity)}</p>
                                                     </div>
                                             })
                                         }

@@ -29,6 +29,7 @@ import { DataPagination } from "./_components/table-components/pagination"
 import { type PaginationType } from "@/lib/types/pagination"
 import { formatCurrency } from "@/app/_utils/format"
 import { LoaderCircle } from "lucide-react"
+import { product_price_history } from "@prisma/client"
 export type TransactionType = {
     id: number;
     admin_id: number;
@@ -46,9 +47,9 @@ export type TransactionType = {
       transaction_id :number;
       quantity :number;
       product : {
-        amount:number;
         product_name : string;
-      }
+      };
+      product_price:product_price_history
     }[]
 }
 const Page = () => {
@@ -70,6 +71,7 @@ const Page = () => {
     }, {
         enabled : !!date && !!user
     })
+    console.log(transactions)
     const refetchTransaction =  async() => {
         await refetch()
     }
@@ -154,9 +156,10 @@ const Page = () => {
                                 <div className=" flex flex-col gap-4">
                                         {
                                             selectedTransaction.orders?.map((order)=>{
+                                                console.log(order)
                                                 return <div key={order.id} className=" flex flex-row justify-between w-full">
                                                     <p>{order.product.product_name} X {order.quantity}</p>
-                                                    <p>{formatCurrency(order.product.amount * order.quantity)}</p>
+                                                    <p>{formatCurrency(order.product_price.price * order.quantity)}</p>
                                                     </div>
                                             })
                                         }

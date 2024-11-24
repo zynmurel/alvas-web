@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { api } from "@/trpc/react";
 import Loading from "../_components/loading";
 import { useState } from "react";
-import { type $Enums } from "@prisma/client";
+import { product_price_history, type $Enums } from "@prisma/client";
 import { ShoppingBasket } from "lucide-react";
 import { AddOrderModal } from "./_components/add-order-modal";
 import { SubmitOrderModal } from "./_components/submit-order-modal";
@@ -29,10 +29,10 @@ export type ProductType = {
   admin_id: number;
   category_id: number;
   quantity: number;
-  amount: number;
   status: $Enums.product_status;
   createdAt: Date;
   updatedAt: Date;
+  price_history : product_price_history[]
 };
 
 const Page = () => {

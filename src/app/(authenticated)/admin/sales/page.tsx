@@ -31,7 +31,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { orders, products } from "@prisma/client";
+import { orders, product_price_history, products } from "@prisma/client";
 import Loading from "../_components/loading";
 import NoFound from "./table-components/no-found";
 import { DataPagination } from "./table-components/pagination";
@@ -70,12 +70,13 @@ const Staffs = () => {
       enabled: !!date?.from && !!date.to,
     },
   );
+  const {mutate} = api.sales.populate.useMutation()
   useEffect(() => {
     let salesData: Sales[] = [];
-    const orders = [] as (orders & { product: products; category: string })[];
+    const orders = [] as (orders & { product: products; category: string; product_price : product_price_history })[];
     transactions?.forEach((tran) =>
       tran.orders.forEach((ord) => {
-        orders.push({ ...ord, category: ord.product.category.category_name });
+        orders.push({ ...ord, category: ord.product.category.category_name, product_price:ord.product_price });
       }),
     );
     const data: { [key: string]: Sales } = {};
@@ -87,7 +88,7 @@ const Staffs = () => {
           count: (foundData?.count || 0) + 1,
           product_name: ord.product.product_name,
           total_sales:
-            (foundData?.total_sales || 0) + (ord.quantity + ord.product.amount),
+            (foundData?.total_sales || 0) + (ord.quantity + ord.product_price.price),
         };
       });
     } else {
@@ -99,7 +100,7 @@ const Staffs = () => {
           product_name: ord.product.product_name,
           count: (foundData?.count || 0) + 1,
           total_sales:
-            (foundData?.total_sales || 0) + (ord.quantity + ord.product.amount),
+            (foundData?.total_sales || 0) + (ord.quantity + ord.product_price.price),
         };
       });
     }
@@ -148,6 +149,7 @@ const Staffs = () => {
       <div className="flex flex-row items-center justify-between gap-1">
         <div className="flex flex-row gap-1">
           <div className="flex flex-row gap-1 text-sm font-bold">
+            {/* <button onClick={()=>mutate()}>populate</button> */}
             <Select
               value={showBy}
               onValueChange={(e) => setShowBy(e as "CATEGORY" | "PRODUCT")}
