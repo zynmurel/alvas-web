@@ -209,7 +209,7 @@ const ProductsPage = () => {
                                       size={"sm"}
                                       variant={"outline"}
                                       className=" mt-1 w-full border-orange-500 text-orange-500">
-                                        Archive
+                                        Not Available
                                       </Button>:<Button
                                       disabled={archiveProductPending}
                                       onClick={onArchiveProduct(prod.id, "AVAILABLE")}

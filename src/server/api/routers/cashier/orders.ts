@@ -6,11 +6,7 @@ export const cashierOrderRouter = createTRPCRouter({
     getProducts: publicProcedure
       .query(async ({ctx}) => {
         const categories = await ctx.db.product_category.findMany()
-          const products = await ctx.db.products.findMany({
-              where : {
-                  status : "AVAILABLE",
-              }
-          })
+          const products = await ctx.db.products.findMany()
           if(categories && products){
             return categories.map((cat)=>{
                 return {

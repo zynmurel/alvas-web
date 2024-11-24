@@ -7,9 +7,6 @@ export const customerOrderRouter = createTRPCRouter({
       .query(async ({ctx}) => {
         const categories = await ctx.db.product_category.findMany()
           const products = await ctx.db.products.findMany({
-              where : {
-                  status : "AVAILABLE",
-              }
           })
           if(categories && products){
             return categories.map((cat)=>{

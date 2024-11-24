@@ -125,13 +125,17 @@ const Page = () => {
                                                     <div className={`  w-full overflow-hidden overflow-x-auto flex  flex-row p-5 px-2 gap-3 ${category!=="ALL" && 'flex-wrap'}`}>
                                                         {
                                                             prod.products.map((product) => {
-                                                                return <div onClick={()=>setSelectedProduct({...product, quantity : 1})} key={product.id} className={` hover:scale-105 transition-all cursor-pointer flex flex-col flex-none h-52 border justify-end rounded w-40 relative overflow-hidden`}>
+                                                                return <div onClick={()=>{
+                                                                    product.status==="AVAILABLE" && setSelectedProduct({...product, quantity : 1})
+                                                                }} key={product.id} className={` ${product.status==="AVAILABLE" && 'hover:scale-105'} transition-all cursor-pointer flex flex-col flex-none h-52 border justify-end rounded w-40 relative overflow-hidden`}>
+
                                                                     <div className=" absolute bg-white rounded overflow-hidden top-0 left-0 right-0 bottom-0">
                                                                         <img src={product.image_url} alt={product.id.toString()} className=" h-full w-full object-cover" />
                                                                     </div>
                                                                     <div className=" self-end text-xs w-full p-2 z-10 bg-black text-white bg-opacity-70">
                                                                         {product.product_name}
                                                                     </div>
+                                                                    {product.status==="NOT_AVAILABLE" &&<div className=" text-white font-bold bg-opacity-70 flex items-center justify-center absolute top-0 bottom-0 left-0 right-0 bg-black">NOT AVAILABLE</div>}
                                                                 </div>
                                                             })
                                                         }
