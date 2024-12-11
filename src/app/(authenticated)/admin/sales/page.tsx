@@ -72,10 +72,18 @@ const Staffs = () => {
   );
   useEffect(() => {
     let salesData: Sales[] = [];
-    const orders = [] as (orders & { product: products; category: string; product_price : product_price_history })[];
+    const orders = [] as (orders & {
+      product: products;
+      category: string;
+      product_price: product_price_history;
+    })[];
     transactions?.forEach((tran) =>
       tran.orders.forEach((ord) => {
-        orders.push({ ...ord, category: ord.product.category.category_name, product_price:ord.product_price });
+        orders.push({
+          ...ord,
+          category: ord.product.category.category_name,
+          product_price: ord.product_price,
+        });
       }),
     );
     const data: { [key: string]: Sales } = {};
@@ -87,7 +95,8 @@ const Staffs = () => {
           count: (foundData?.count || 0) + ord.quantity,
           product_name: ord.product.product_name,
           total_sales:
-            (foundData?.total_sales || 0) + (ord.quantity * ord.product_price.price),
+            (foundData?.total_sales || 0) +
+            ord.quantity * ord.product_price.price,
         };
       });
     } else {
@@ -99,7 +108,8 @@ const Staffs = () => {
           product_name: ord.product.product_name,
           count: (foundData?.count || 0) + ord.quantity,
           total_sales:
-            (foundData?.total_sales || 0) + (ord.quantity * ord.product_price.price),
+            (foundData?.total_sales || 0) +
+            ord.quantity * ord.product_price.price,
         };
       });
     }
@@ -271,12 +281,19 @@ const Staffs = () => {
           >
             Download CSV
           </CSVLink> */}
-        <Button onClick={()=>reactToPrintFn()}>Print Report</Button>
+          <Button onClick={() => reactToPrintFn()}>Print Report</Button>
         </div>
       </div>
       <div ref={contentRef}>
+        <div className="print-only flex justify-center items-center flex-col mt-3 text-3xl font-bold">
+          <img src="/images/alvas.jpg" alt="logo" className=" w-32" />
+          <div>Alvas Restaurant</div>
+          <div className=" text-xs">Tagbilaran City, Bohol 6300</div>
+          <div className=" text-xs">09178903063</div>
+          <div className=" text-xs">alvas2000@yahoo.com</div>
+        </div>
         <div className="flex w-full flex-col gap-5">
-          <div className="px-1 py-5 text-xl font-bold text-orange-500">
+          <div className="px-1 py-3 text-xl font-bold text-orange-500">
             Sale of {format(dateShow.from, "PPP")} to{" "}
             {format(dateShow.to, "PPP")}
           </div>
@@ -331,6 +348,7 @@ const Staffs = () => {
             )}
           </div>
         </div>
+        <div className="print-only mt-2 text-sm font-medium">Prepared by : Alvas Admin</div>
       </div>
     </div>
   );

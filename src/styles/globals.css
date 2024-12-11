@@ -147,3 +147,13 @@
 .bg-background {
   background-color: hsl(var(--background));
 }
+.print-only {
+  display: none;
+}
+
+/* Show the element when printing */
+@media print {
+  .print-only {
+    display: flex; /* or inline-block depending on your layout */
+  }
+}
