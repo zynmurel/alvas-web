@@ -45,6 +45,7 @@ type Sales = {
   product_name?: string;
   total_sales: number;
   count: number;
+  price?: number
 };
 const Staffs = () => {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -100,12 +101,14 @@ const Staffs = () => {
         };
       });
     } else {
+      console.log(orders)
       orders.forEach((ord) => {
         const foundData =
-          data[ord.product.product_name + ord.product.product_name];
-        data[ord.product.product_name + ord.product.product_name] = {
+          data[ord.product.product_name + ord.product.product_name + ord.product_price_id];
+        data[ord.product.product_name + ord.product.product_name+ ord.product_price_id] = {
           category: ord.category,
           product_name: ord.product.product_name,
+          price : ord.product_price.price,
           count: (foundData?.count || 0) + ord.quantity,
           total_sales:
             (foundData?.total_sales || 0) +
@@ -303,17 +306,17 @@ const Staffs = () => {
             <TableHeader>
               <TableRow className="">
                 {showBy === "PRODUCT" && (
-                  <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
+                  <TableHead className="text-start text-sm font-bold uppercase text-black dark:text-white">
                     Product Name
                   </TableHead>
                 )}
-                <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
+                <TableHead className="text-start text-sm font-bold uppercase text-black dark:text-white">
                   Category
                 </TableHead>
-                <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
+                <TableHead className="text-start text-sm font-bold uppercase text-black dark:text-white">
                   Orders
                 </TableHead>
-                <TableHead className="text-end text-xl font-bold uppercase text-black dark:text-white">
+                <TableHead className="text-end text-sm font-bold uppercase text-black dark:text-white">
                   Sales
                 </TableHead>
               </TableRow>
@@ -324,7 +327,7 @@ const Staffs = () => {
                   <TableRow key={index}>
                     {showBy === "PRODUCT" && (
                       <TableCell className="text-start">
-                        {sale.product_name}
+                        {sale.product_name} <span className=" text-foreground/60">{sale.price && `(${formatCurrency(sale.price)})`}</span>
                       </TableCell>
                     )}
                     <TableCell className="text-start">
