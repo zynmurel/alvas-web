@@ -45,7 +45,7 @@ type Sales = {
   product_name?: string;
   total_sales: number;
   count: number;
-  price?: number
+  price?: number;
 };
 const Staffs = () => {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -101,14 +101,22 @@ const Staffs = () => {
         };
       });
     } else {
-      console.log(orders)
+      console.log(orders);
       orders.forEach((ord) => {
         const foundData =
-          data[ord.product.product_name + ord.product.product_name + ord.product_price_id];
-        data[ord.product.product_name + ord.product.product_name+ ord.product_price_id] = {
+          data[
+            ord.product.product_name +
+              ord.product.product_name +
+              ord.product_price_id
+          ];
+        data[
+          ord.product.product_name +
+            ord.product.product_name +
+            ord.product_price_id
+        ] = {
           category: ord.category,
           product_name: ord.product.product_name,
-          price : ord.product_price.price,
+          price: ord.product_price.price,
           count: (foundData?.count || 0) + ord.quantity,
           total_sales:
             (foundData?.total_sales || 0) +
@@ -288,12 +296,12 @@ const Staffs = () => {
         </div>
       </div>
       <div ref={contentRef}>
-        <div className="print-only flex justify-center items-center flex-col mt-3 text-3xl font-bold">
-          <img src="/images/alvas.jpg" alt="logo" className=" w-32" />
+        <div className="print-only mt-3 flex flex-col items-center justify-center text-3xl font-bold">
+          <img src="/images/alvas.jpg" alt="logo" className="w-32" />
           <div>Alvas Restaurant</div>
-          <div className=" text-xs">Tagbilaran City, Bohol 6300</div>
-          <div className=" text-xs">09178903063</div>
-          <div className=" text-xs">alvas2000@yahoo.com</div>
+          <div className="text-xs">Tagbilaran City, Bohol 6300</div>
+          <div className="text-xs">09178903063</div>
+          <div className="text-xs">alvas2000@yahoo.com</div>
         </div>
         <div className="flex w-full flex-col gap-5">
           <div className="px-1 py-3 text-xl font-bold text-orange-500">
@@ -310,11 +318,16 @@ const Staffs = () => {
                     Product Name
                   </TableHead>
                 )}
+                {showBy === "PRODUCT" && (
+                  <TableHead className="text-start text-sm font-bold uppercase text-black dark:text-white">
+                    Price
+                  </TableHead>
+                )}
                 <TableHead className="text-start text-sm font-bold uppercase text-black dark:text-white">
                   Category
                 </TableHead>
                 <TableHead className="text-start text-sm font-bold uppercase text-black dark:text-white">
-                  Orders
+                  Quantity
                 </TableHead>
                 <TableHead className="text-end text-sm font-bold uppercase text-black dark:text-white">
                   Sales
@@ -327,7 +340,12 @@ const Staffs = () => {
                   <TableRow key={index}>
                     {showBy === "PRODUCT" && (
                       <TableCell className="text-start">
-                        {sale.product_name} <span className=" text-foreground/60">{sale.price && `(${formatCurrency(sale.price)})`}</span>
+                        {sale.product_name}{" "}
+                      </TableCell>
+                    )}
+                    {showBy === "PRODUCT" && (
+                      <TableCell className="text-start">
+                        {sale.price && `${formatCurrency(sale.price)}`}
                       </TableCell>
                     )}
                     <TableCell className="text-start">
@@ -351,7 +369,9 @@ const Staffs = () => {
             )}
           </div>
         </div>
-        <div className="print-only mt-2 text-sm font-medium">Prepared by : Alvas Admin</div>
+        <div className="print-only mt-2 text-sm font-medium">
+          Prepared by : Alvas Admin
+        </div>
       </div>
     </div>
   );
