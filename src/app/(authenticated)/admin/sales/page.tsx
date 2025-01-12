@@ -305,7 +305,7 @@ const Staffs = () => {
         </div>
         <div className="flex w-full flex-col gap-5">
           <div className="px-1 py-3 text-xl font-bold text-orange-500">
-            Sale of {format(dateShow.from, "PPP")} to{" "}
+            Sale as of {format(dateShow.from, "PPP")} to{" "}
             {format(dateShow.to, "PPP")}
           </div>
         </div>
